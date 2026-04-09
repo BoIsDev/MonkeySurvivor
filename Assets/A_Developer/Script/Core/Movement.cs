@@ -13,7 +13,6 @@ public class Movement : MonoBehaviour
         HandleInput();
         HandleMovement();
         HandleRotation();
-        HandleAnimation();
     }
 
     void HandleInput()
@@ -52,10 +51,5 @@ public class Movement : MonoBehaviour
                 rotationSpeed * Time.deltaTime
             );
         }
-    }
-
-    void HandleAnimation()
-    {
-        animator.SetFloat("Speed", moveDirection.magnitude);
     }
 }
