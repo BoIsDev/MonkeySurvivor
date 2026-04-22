@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Enemy/Enemy Data")]
-public class EnemyData : ScriptableObject
+[CreateAssetMenu(menuName = "EnemySO/Enemy Data")]
+public class EnemyDataSO : ScriptableObject
 {
     public EnemyStyle enemyStyle;
     public float maxHealth;

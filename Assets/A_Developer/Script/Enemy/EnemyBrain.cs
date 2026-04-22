@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyBrain : MonoBehaviour
+public class EnemyBrain : MonoBehaviour,IDamage
 {
     public enum StateEnemy
     {
@@ -11,16 +11,19 @@ public class EnemyBrain : MonoBehaviour
     }
 
     [Header("Refs")] [SerializeField] private Animator animator;
-    [SerializeField] private EnemyData data;
+    [SerializeField] private EnemyDataSO data;
 
     private Transform player;
     private StateEnemy currentState;
 
     private float nextAttackTime;
+    private float maxHpEnemy;
+
 
     private void OnEnable()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        maxHpEnemy = data.maxHealth;
         SetState(StateEnemy.Idle);
     }
 
@@ -125,13 +128,16 @@ public class EnemyBrain : MonoBehaviour
             animator.SetTrigger("Attacking");
         }
     }
-
-    // ======================
-    // EXTERNAL (CALL FROM HEALTH)
-    // ======================
+    
     public void OnDead()
     {
         SetState(StateEnemy.Dead);
         gameObject.SetActive(false);
+    }
+
+    public void TakeDamage(float damageData)
+    {
+        maxHpEnemy -= damageData;
+        Debug.Log("TakeDamage");
     }
 }
