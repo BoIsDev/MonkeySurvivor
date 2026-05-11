@@ -3,29 +3,32 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    [Header("Stats")] [SerializeField] private float rangeTarget = 10f;
-    [SerializeField] protected float attackRate = 1f;
-    [SerializeField] protected float range = 5f;
-    [SerializeField] protected int damage = 10;
-    [SerializeField] protected int maxTarget = 2;
+    [Header("Data")] [SerializeField] public WeaponDataSO weaponData;
     [SerializeField] protected LayerMask enemyLayer;
 
-    [Header("Target")] [SerializeField] protected WeaponType weaponType;
-    [Header("Target")] [SerializeField] protected TargetType targetType;
-    [Header("Attack")] [SerializeField] protected AttackType attackType;
+    [Header("Config")] [SerializeField] protected TargetType targetType;
+    [SerializeField] protected AttackType attackType;
 
+    private int currentLevel = 0;
     protected float lastAttackTime;
+
+    protected WeaponDataSO Data => weaponData;
+    protected float AttackRate => weaponData.levels[currentLevel].attackRate;
+    protected float Range => weaponData.levels[currentLevel].range;
+    protected int Damage => weaponData.levels[currentLevel].damage;
+    protected int MaxTarget => weaponData.levels[currentLevel].maxTarget;
+
+    public void LevelUp()
+    {
+        if (currentLevel < weaponData.levels.Length - 1)
+            currentLevel++;
+    }
 
     // =========================
     // MAIN
     // =========================
 
-    protected virtual void Update()
-    {
-        HandleAttack();
-    }
-
-    public void HandleAttack()
+    public void HandleAttack(Transform holdSpawn)
     {
         if (!CanAttack())
             return;
@@ -35,14 +38,14 @@ public abstract class WeaponBase : MonoBehaviour
         if (targets.Count == 0)
             return;
 
-        ExecuteAttack(targets);
+        ExecuteAttack(targets,holdSpawn);
 
         lastAttackTime = Time.time;
     }
 
     protected virtual bool CanAttack()
     {
-        return Time.time >= lastAttackTime + attackRate;
+        return Time.time >= lastAttackTime + AttackRate;
     }
 
     // =========================
@@ -53,17 +56,10 @@ public abstract class WeaponBase : MonoBehaviour
     {
         switch (targetType)
         {
-            case TargetType.Closest:
-                return FindClosestTarget();
-
-            case TargetType.Furthest:
-                return FindFurthestTarget();
-
-            case TargetType.Random:
-                return FindRandomTarget(maxTarget);
-
-            case TargetType.AllInRange:
-                return FindAllTargets();
+            case TargetType.Closest: return FindClosestTarget();
+            case TargetType.Furthest: return FindFurthestTarget();
+            case TargetType.Random: return FindRandomTarget(MaxTarget);
+            case TargetType.AllInRange: return FindAllTargets();
         }
 
         return new List<Transform>();
@@ -71,18 +67,12 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual List<Transform> FindAllTargets()
     {
-        Collider[] hits = Physics.OverlapSphere(
-            transform.position,
-            range,
-            enemyLayer
-        );
+        Collider[] hits = Physics.OverlapSphere(transform.position, Range, enemyLayer);
 
         List<Transform> result = new List<Transform>();
 
         foreach (var hit in hits)
-        {
             result.Add(hit.transform);
-        }
 
         return result;
     }
@@ -99,8 +89,7 @@ public abstract class WeaponBase : MonoBehaviour
 
         foreach (var target in allTargets)
         {
-            float distance =
-                Vector3.Distance(transform.position, target.position);
+            float distance = Vector3.Distance(transform.position, target.position);
 
             if (distance < minDistance)
             {
@@ -124,8 +113,7 @@ public abstract class WeaponBase : MonoBehaviour
 
         foreach (var target in allTargets)
         {
-            float distance =
-                Vector3.Distance(transform.position, target.position);
+            float distance = Vector3.Distance(transform.position, target.position);
 
             if (distance > maxDistance)
             {
@@ -137,20 +125,16 @@ public abstract class WeaponBase : MonoBehaviour
         return new List<Transform>() { furthest };
     }
 
-    protected virtual List<Transform> FindRandomTarget(int maxTarget)
+    protected virtual List<Transform> FindRandomTarget(int count)
     {
         List<Transform> allTargets = FindAllTargets();
 
         List<Transform> result = new List<Transform>();
 
-        while (allTargets.Count > 0 &&
-               result.Count < maxTarget)
+        while (allTargets.Count > 0 && result.Count < count)
         {
-            int randomIndex =
-                Random.Range(0, allTargets.Count);
-
+            int randomIndex = Random.Range(0, allTargets.Count);
             result.Add(allTargets[randomIndex]);
-
             allTargets.RemoveAt(randomIndex);
         }
 
@@ -161,25 +145,14 @@ public abstract class WeaponBase : MonoBehaviour
     // ATTACK
     // =========================
 
-    protected virtual void ExecuteAttack(List<Transform> targets)
+    protected virtual void ExecuteAttack(List<Transform> targets,Transform holdSpawn)
     {
         switch (attackType)
         {
-            case AttackType.Projectile:
-                SpawnProjectile(targets[0]);
-                break;
-
-            case AttackType.Lightning:
-                SpawnLightning(targets);
-                break;
-
-            case AttackType.Aura:
-                AuraDamage(targets);
-                break;
-
-            case AttackType.Meteor:
-                SpawnMeteor(targets);
-                break;
+            case AttackType.Projectile: SpawnProjectile(targets[0],holdSpawn); break;
+            case AttackType.Lightning: SpawnLightning(targets,holdSpawn); break;
+            case AttackType.Aura: AuraDamage(targets,holdSpawn); break;
+            case AttackType.Meteor: SpawnMeteor(targets,holdSpawn); break;
         }
     }
 
@@ -187,22 +160,32 @@ public abstract class WeaponBase : MonoBehaviour
     // ATTACK LOGIC
     // =========================
 
-    protected abstract void SpawnProjectile(Transform target);
+    protected virtual void SpawnProjectile(Transform target, Transform holdSpawn)
+    {
+    }
 
-    protected abstract void SpawnLightning(List<Transform> targets);
+    protected virtual void SpawnLightning(List<Transform> targets, Transform holdSpawn)
+    {
+    }
 
-    protected abstract void AuraDamage(List<Transform> targets);
+    protected virtual void AuraDamage(List<Transform> targets, Transform holdSpawn)
+    {
+    }
 
-    protected abstract void SpawnMeteor(List<Transform> targets);
-    
+    protected virtual void SpawnMeteor(List<Transform> targets, Transform holdSpawn)
+    {
+    }
+
     // =========================
     // DEBUG
     // =========================
 
     protected virtual void OnDrawGizmosSelected()
     {
+        if (weaponData == null || weaponData.levels.Length == 0) return;
+
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, range);
+        Gizmos.DrawWireSphere(transform.position, Range);
     }
 }
 
@@ -220,10 +203,4 @@ public enum AttackType
     Lightning,
     Aura,
     Meteor
-}
-public enum WeaponType
-{
-    EnergyBoomWeapon,
-    IceAuraWeapon,
-    Fireball,
 }
