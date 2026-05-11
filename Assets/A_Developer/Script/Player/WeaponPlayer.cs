@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class WeaponPlayer : MonoBehaviour
 {
-    public List<Weapon> weapons = new List<Weapon>();
-    
-    public void AddWeapon(Weapon weaponPrefab)
+    public List<WeaponBase> weaponsStore = new List<WeaponBase>();
+    public List<WeaponBase> weaponsEquip = new List<WeaponBase>();
+    public void AddWeapon(WeaponBase weaponBasePrefab)
     {
-        Weapon newWeapon = Instantiate(weaponPrefab, transform);
-        weapons.Add(newWeapon);
+        WeaponBase newWeaponBase = Instantiate(weaponBasePrefab, transform);
+        weaponsStore.Add(newWeaponBase);
     }
 
     void Update()
     {
-        foreach (var weapon in weapons)
+        foreach (var weapon in weaponsEquip)
         {
             weapon.HandleAttack();
         }
