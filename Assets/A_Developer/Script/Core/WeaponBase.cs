@@ -3,24 +3,21 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    [Header("Data")]
-    public WeaponDataSO weaponData;
+    [Header("Data")] public WeaponDataSO weaponData;
     [SerializeField] protected LayerMask enemyLayer;
 
-    [Header("Effect")]
-    [SerializeField] public GameObject effectPrefab;
+    [Header("Effect")] [SerializeField] public GameObject effectPrefab;
 
-    [Header("Config")]
-    [SerializeField] protected TargetType targetType;
+    [Header("Config")] [SerializeField] protected TargetType targetType;
     [SerializeField] protected AttackType attackType;
 
     private int currentLevel = 0;
     protected float lastAttackTime;
 
     protected float AttackRate => weaponData.levels[currentLevel].attackRate;
-    protected float Range     => weaponData.levels[currentLevel].range;
-    protected int   Damage    => weaponData.levels[currentLevel].damage;
-    protected int   MaxTarget => weaponData.levels[currentLevel].maxTarget;
+    protected float Range => weaponData.levels[currentLevel].range;
+    protected int Damage => weaponData.levels[currentLevel].damage;
+    protected int MaxTarget => weaponData.levels[currentLevel].maxTarget;
 
     public void Tick()
     {
@@ -62,11 +59,12 @@ public abstract class WeaponBase : MonoBehaviour
     {
         switch (targetType)
         {
-            case TargetType.Closest:   return FindClosestTarget();
-            case TargetType.Furthest:  return FindFurthestTarget();
-            case TargetType.Random:    return FindRandomTarget(MaxTarget);
+            case TargetType.Closest: return FindClosestTarget();
+            case TargetType.Furthest: return FindFurthestTarget();
+            case TargetType.Random: return FindRandomTarget(MaxTarget);
             case TargetType.AllInRange: return FindAllTargets();
         }
+
         return new List<Transform>();
     }
 
@@ -89,8 +87,13 @@ public abstract class WeaponBase : MonoBehaviour
         foreach (var t in all)
         {
             float d = Vector3.Distance(transform.position, t.position);
-            if (d < minDist) { minDist = d; closest = t; }
+            if (d < minDist)
+            {
+                minDist = d;
+                closest = t;
+            }
         }
+
         return new List<Transform>() { closest };
     }
 
@@ -104,8 +107,13 @@ public abstract class WeaponBase : MonoBehaviour
         foreach (var t in all)
         {
             float d = Vector3.Distance(transform.position, t.position);
-            if (d > maxDist) { maxDist = d; furthest = t; }
+            if (d > maxDist)
+            {
+                maxDist = d;
+                furthest = t;
+            }
         }
+
         return new List<Transform>() { furthest };
     }
 
@@ -119,6 +127,7 @@ public abstract class WeaponBase : MonoBehaviour
             result.Add(all[i]);
             all.RemoveAt(i);
         }
+
         return result;
     }
 
@@ -131,16 +140,27 @@ public abstract class WeaponBase : MonoBehaviour
         switch (attackType)
         {
             case AttackType.Projectile: SpawnProjectile(targets[0]); break;
-            case AttackType.Lightning:  SpawnLightning(targets);     break;
-            case AttackType.Aura:       AuraDamage(targets);         break;
-            case AttackType.Meteor:     SpawnMeteor(targets);        break;
+            case AttackType.Slash: SpawnSlash(targets[0]); break;
+            case AttackType.Aura: AuraDamage(targets); break;
+            case AttackType.Meteor: SpawnMeteor(targets); break;
         }
     }
 
-    protected virtual void SpawnProjectile(Transform target)   { }
-    protected virtual void SpawnLightning(List<Transform> targets) { }
-    protected virtual void AuraDamage(List<Transform> targets)    { }
-    protected virtual void SpawnMeteor(List<Transform> targets)   { }
+    protected virtual void SpawnProjectile(Transform target)
+    {
+    }
+
+    protected virtual void SpawnSlash(Transform targets)
+    {
+    }
+
+    protected virtual void AuraDamage(List<Transform> targets)
+    {
+    }
+
+    protected virtual void SpawnMeteor(List<Transform> targets)
+    {
+    }
 
     // =========================
     // DEBUG
@@ -154,5 +174,18 @@ public abstract class WeaponBase : MonoBehaviour
     }
 }
 
-public enum TargetType  { Closest, Furthest, Random, AllInRange }
-public enum AttackType  { Projectile, Lightning, Aura, Meteor }
+public enum TargetType
+{
+    Closest,
+    Furthest,
+    Random,
+    AllInRange
+}
+
+public enum AttackType
+{
+    Projectile,
+    Slash,
+    Aura,
+    Meteor
+}

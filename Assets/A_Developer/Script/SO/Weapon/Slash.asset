@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197e9bb9a799b2f4ca2de7a6a9a9c2b1, type: 3}
+  m_Name: Slash
+  m_EditorClassIdentifier: 
+  weaponType: 2
+  weaponName: Slash_A
+  icon: {fileID: 0}
+  description: 
+  weaponPrefab: {fileID: 3749727012233363084, guid: 5a82bb78945ac1c408291d7c0887143a, type: 3}
+  levels:
+  - attackRate: 1
+    range: 3
+    damage: 30
+    maxTarget: 1
+  - attackRate: 1
+    range: 5
+    damage: 50
+    maxTarget: 1

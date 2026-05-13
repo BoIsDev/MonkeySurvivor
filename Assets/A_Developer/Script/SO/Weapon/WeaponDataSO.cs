@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum WeaponType { IceAura, EnergyBoom }
+public enum WeaponType { IceAura, EnergyBoom, Slash }
 
 [CreateAssetMenu(menuName = "WeaponSO/Weapon Data")]
 public class WeaponDataSO : ScriptableObject
