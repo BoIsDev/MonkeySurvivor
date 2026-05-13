@@ -36,11 +36,11 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    void LevelUp()
+    public void LevelUp()
     {
         level++;
         currentExp = 0;
-
+        UITestManager.Instance.OpenPaneWeapon();
         Debug.Log("Level Up!");
     }
 

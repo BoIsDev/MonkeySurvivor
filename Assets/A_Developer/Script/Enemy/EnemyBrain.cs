@@ -22,7 +22,7 @@ public class EnemyBrain : MonoBehaviour,IDamage
 
     private void OnEnable()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        player = UnityEngine.GameObject.FindGameObjectWithTag("Player")?.transform;
         maxHpEnemy = data.maxHealth;
         SetState(StateEnemy.Idle);
     }
@@ -120,7 +120,6 @@ public class EnemyBrain : MonoBehaviour,IDamage
         {
             animator.SetBool("IsMelee",false);
             animator.SetTrigger("Attacking");
-            Debug.Log("Enemy Attack: " + data.damage);
         }
         else if(data.enemyStyle == EnemyStyle.Melee)
         {

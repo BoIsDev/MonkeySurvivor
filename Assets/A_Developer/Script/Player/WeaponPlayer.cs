@@ -3,19 +3,30 @@ using UnityEngine;
 
 public class WeaponPlayer : MonoBehaviour
 {
-    public List<WeaponBase> weaponsStore = new List<WeaponBase>();
-    public List<WeaponBase> weaponsEquip = new List<WeaponBase>();
-    public void AddWeapon(WeaponBase weaponBasePrefab)
+    // Set sẵn trong Editor — pool vũ khí có thể nhận
+    [SerializeField] private List<WeaponDataSO> weaponsStore = new List<WeaponDataSO>();
+
+    // Runtime — vũ khí đang trang bị (tự chạy Update của riêng chúng)
+    private Dictionary<WeaponType, WeaponBase> weaponsEquip = new Dictionary<WeaponType, WeaponBase>();
+
+    public void AddWeaponInventory(WeaponDataSO weaponData)
     {
-        WeaponBase newWeaponBase = Instantiate(weaponBasePrefab, transform);
-        weaponsStore.Add(newWeaponBase);
+        if (weaponsEquip.ContainsKey(weaponData.weaponType))
+        {
+            weaponsEquip[weaponData.weaponType].LevelUp();
+            return;
+        }
+
+        WeaponBase newWeapon = Instantiate(weaponData.weaponPrefab, transform);
+        newWeapon.weaponData = weaponData;
+        weaponsEquip.Add(weaponData.weaponType, newWeapon);
     }
+
+    public bool HasWeapon(WeaponType type) => weaponsEquip.ContainsKey(type);
 
     void Update()
     {
-        foreach (var weapon in weaponsEquip)
-        {
-            weapon.HandleAttack();
-        }
+        foreach (var weapon in weaponsEquip.Values)
+            weapon.Tick();
     }
 }

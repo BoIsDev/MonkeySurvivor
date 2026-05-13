@@ -1,29 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IceAuraWeaponBase : WeaponBase
+public class IceAuraGameObject : WeaponBase
 {
-    [Header("IceAura Setting")]
-    [SerializeField] private GameObject iceAuraPrefab;
-
-
-    protected override void SpawnProjectile(Transform target)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    protected override void SpawnLightning(List<Transform> targets)
-    {
-        throw new System.NotImplementedException();
-    }
+    private GameObject spawnedAura;
 
     protected override void AuraDamage(List<Transform> targets)
     {
-        iceAuraPrefab.SetActive(true);
-    }
+        if (spawnedAura != null) return;
 
-    protected override void SpawnMeteor(List<Transform> targets)
-    {
-        throw new System.NotImplementedException();
+        spawnedAura = Instantiate(effectPrefab, transform);
     }
 }
