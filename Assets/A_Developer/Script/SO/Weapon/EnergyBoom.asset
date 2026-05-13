@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197e9bb9a799b2f4ca2de7a6a9a9c2b1, type: 3}
+  m_Name: EnergyBoom
+  m_EditorClassIdentifier: 
+  weaponType: 1
+  weaponName: EnergyBoom
+  icon: {fileID: 0}
+  description: 
+  weaponPrefab: {fileID: 5712269693075482380, guid: ac5bc4d19697c3f468a93978ff80e1a1, type: 3}
+  levels:
+  - attackRate: 2
+    range: 5
+    damage: 5
+    maxTarget: 2
+  - attackRate: 1.5
+    range: 10
+    damage: 10
+    maxTarget: 3
+  - attackRate: 1
+    range: 15
+    damage: 20
+    maxTarget: 5

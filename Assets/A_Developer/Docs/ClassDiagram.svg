@@ -1,0 +1,722 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1280" font-family="Segoe UI, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+    <marker id="inherit" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="14" markerHeight="14" orient="auto-start-reverse">
+      <path d="M0,0 L12,6 L0,12 z" fill="#fff" stroke="#444" stroke-width="1.2"/>
+    </marker>
+    <marker id="diamond" viewBox="0 0 12 12" refX="0" refY="6" markerWidth="14" markerHeight="14" orient="auto-start-reverse">
+      <path d="M0,6 L6,0 L12,6 L6,12 z" fill="#fff" stroke="#444" stroke-width="1.2"/>
+    </marker>
+    <style>
+      .box { rx:8; ry:8; stroke:#374151; stroke-width:1.2; }
+      .title { font-weight:700; font-size:13px; fill:#111; }
+      .layer-title { font-size:14px; font-weight:700; fill:#1e3a8a; }
+      .legend-text { font-size:12px; fill:#111; }
+      .iface { font-style:italic; fill:#7c2d12; }
+      .abstract { font-style:italic; fill:#1e3a8a; }
+      .so { fill:#ecfccb; }
+      .mb { fill:#dbeafe; }
+      .mgr { fill:#fde68a; }
+      .iface-bg { fill:#fee2e2; }
+      .util { fill:#e5e7eb; }
+      .layer-bg { fill:#f8fafc; stroke:#cbd5e1; stroke-dasharray:6 4; }
+      .line { stroke:#444; stroke-width:1.2; fill:none; }
+      .dash { stroke:#888; stroke-width:1.2; stroke-dasharray:5 4; fill:none; }
+    </style>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="850" y="28" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Monkey Survivor — Core System Class Diagram</text>
+  <text x="850" y="48" text-anchor="middle" font-size="12" fill="#475569">Top-down 3D mobile · Vampire-Survivor style · Full meta-progression</text>
+
+  <!-- LEGEND -->
+  <g transform="translate(20,60)">
+    <rect class="box util" x="0" y="0" width="280" height="110"/>
+    <text class="title" x="10" y="18">Legend</text>
+    <rect class="box mb" x="10" y="28" width="14" height="14"/><text class="legend-text" x="30" y="40">MonoBehaviour</text>
+    <rect class="box so" x="130" y="28" width="14" height="14"/><text class="legend-text" x="150" y="40">ScriptableObject</text>
+    <rect class="box mgr" x="10" y="50" width="14" height="14"/><text class="legend-text" x="30" y="62">Manager / Service</text>
+    <rect class="box iface-bg" x="130" y="50" width="14" height="14"/><text class="legend-text" x="150" y="62">Interface</text>
+    <line x1="10" y1="80" x2="40" y2="80" class="line" marker-end="url(#inherit)"/><text class="legend-text" x="48" y="84">inherit / implement</text>
+    <line x1="10" y1="98" x2="40" y2="98" class="line" marker-start="url(#diamond)"/><text class="legend-text" x="48" y="102">composition</text>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 1: GAME FLOW -->
+  <!-- ============================================================== -->
+  <g>
+    <rect class="layer-bg" x="320" y="60" width="1360" height="170"/>
+    <text class="layer-title" x="335" y="80">1. Game Flow Layer</text>
+
+    <g transform="translate(340,95)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">GameManager (Singleton)</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- state: GameState</text>
+      <text x="10" y="56">- currentRun: RunController</text>
+      <text x="10" y="72">+ StartRun(charId)</text>
+      <text x="10" y="88">+ EndRun(victory)</text>
+      <text x="10" y="104">+ PauseGame() / Resume()</text>
+    </g>
+
+    <g transform="translate(560,95)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">RunController</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- runTime: float</text>
+      <text x="10" y="56">- killCount: int</text>
+      <text x="10" y="72">+ Begin(loadout)</text>
+      <text x="10" y="88">+ Tick(dt)</text>
+      <text x="10" y="104">+ Finalize() → RunResult</text>
+    </g>
+
+    <g transform="translate(780,95)">
+      <rect class="box mgr" width="210" height="120"/>
+      <text class="title" x="10" y="18">EnemyDirector</text>
+      <line x1="0" y1="24" x2="210" y2="24" class="line"/>
+      <text x="10" y="40">- curve: DifficultyCurve</text>
+      <text x="10" y="56">- waves: List&lt;WaveDef&gt;</text>
+      <text x="10" y="72">+ ResolveBudget(t): float</text>
+      <text x="10" y="88">+ NextEvent(t): WaveEvent</text>
+      <text x="10" y="104">+ TriggerBoss(t)</text>
+    </g>
+
+    <g transform="translate(1010,95)">
+      <rect class="box so" width="200" height="120"/>
+      <text class="title abstract" x="10" y="18">StageDataSO</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ durationSec: int</text>
+      <text x="10" y="56">+ curve: AnimationCurve</text>
+      <text x="10" y="72">+ enemyTable: EnemyTable</text>
+      <text x="10" y="88">+ bossPrefab: GameObject</text>
+      <text x="10" y="104">+ environment: ArenaRef</text>
+    </g>
+
+    <g transform="translate(1230,95)">
+      <rect class="box util" width="200" height="120"/>
+      <text class="title" x="10" y="18">enum GameState</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">Boot, MainMenu, Loadout,</text>
+      <text x="10" y="56">InRun, LevelUp, Paused,</text>
+      <text x="10" y="72">RunEnd, MetaShop</text>
+    </g>
+
+    <g transform="translate(1450,95)">
+      <rect class="box util" width="220" height="120"/>
+      <text class="title" x="10" y="18">struct RunResult</text>
+      <line x1="0" y1="24" x2="220" y2="24" class="line"/>
+      <text x="10" y="40">+ victory: bool</text>
+      <text x="10" y="56">+ timeSurvived: float</text>
+      <text x="10" y="72">+ kills, gold, gems</text>
+      <text x="10" y="88">+ characterUsed: string</text>
+    </g>
+
+    <line x1="540" y1="155" x2="560" y2="155" class="line" marker-start="url(#diamond)"/>
+    <line x1="760" y1="155" x2="780" y2="155" class="line" marker-start="url(#diamond)"/>
+    <line x1="990" y1="155" x2="1010" y2="155" class="line" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 2: CHARACTER + COMBAT -->
+  <!-- ============================================================== -->
+  <g>
+    <rect class="layer-bg" x="20" y="250" width="830" height="430"/>
+    <text class="layer-title" x="35" y="270">2. Character &amp; Combat Layer</text>
+
+    <g transform="translate(35,285)">
+      <rect class="box iface-bg" width="160" height="80"/>
+      <text class="title iface" x="10" y="18">«interface»</text>
+      <text class="title iface" x="10" y="34">IDamageable</text>
+      <line x1="0" y1="40" x2="160" y2="40" class="line"/>
+      <text x="10" y="56">+ TakeDamage(DamageInfo)</text>
+      <text x="10" y="72">+ IsAlive: bool</text>
+    </g>
+
+    <g transform="translate(215,285)">
+      <rect class="box util" width="180" height="80"/>
+      <text class="title" x="10" y="18">struct DamageInfo</text>
+      <line x1="0" y1="24" x2="180" y2="24" class="line"/>
+      <text x="10" y="40">+ amount, source</text>
+      <text x="10" y="56">+ type: DamageType</text>
+      <text x="10" y="72">+ isCrit, knockback</text>
+    </g>
+
+    <g transform="translate(415,285)">
+      <rect class="box util" width="200" height="80"/>
+      <text class="title" x="10" y="18">class StatModifier</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ type: StatType</text>
+      <text x="10" y="56">+ op: Add | Mult | Override</text>
+      <text x="10" y="72">+ value, source, duration</text>
+    </g>
+
+    <g transform="translate(635,285)">
+      <rect class="box util" width="200" height="80"/>
+      <text class="title" x="10" y="18">class StatBlock</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- baseStats, mods</text>
+      <text x="10" y="56">+ Get(StatType): float</text>
+      <text x="10" y="72">+ Add/Remove(Modifier)</text>
+    </g>
+
+    <g transform="translate(35,380)">
+      <rect class="box mb" width="200" height="130"/>
+      <text class="title" x="10" y="18">CharacterController3D</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- joystick: VirtualJoystick</text>
+      <text x="10" y="56">- stats: StatBlock</text>
+      <text x="10" y="72">+ Move(Vector2 input)</text>
+      <text x="10" y="88">+ FaceMoveDir()</text>
+      <text x="10" y="104">+ ApplyKnockback(v)</text>
+      <text x="10" y="120">+ OnDamaged(DamageInfo)</text>
+    </g>
+
+    <g transform="translate(255,380)">
+      <rect class="box mb" width="200" height="130"/>
+      <text class="title" x="10" y="18">PlayerStats</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ data: CharacterDataSO</text>
+      <text x="10" y="56">+ stats: StatBlock</text>
+      <text x="10" y="72">+ currentHP, currentXP</text>
+      <text x="10" y="88">+ TakeDamage(DamageInfo)</text>
+      <text x="10" y="104">+ AddExp(int)</text>
+      <text x="10" y="120">events: Damaged / LeveledUp</text>
+    </g>
+
+    <g transform="translate(475,380)">
+      <rect class="box so" width="200" height="130"/>
+      <text class="title" x="10" y="18">CharacterDataSO</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ id, displayName, art</text>
+      <text x="10" y="56">+ baseStats: StatBlock</text>
+      <text x="10" y="72">+ startingWeapon: WeaponSO</text>
+      <text x="10" y="88">+ signaturePassive: PassiveSO</text>
+      <text x="10" y="104">+ unlockCondition: Condition</text>
+      <text x="10" y="120">+ ultimate: SignatureSkillSO</text>
+    </g>
+
+    <g transform="translate(695,380)">
+      <rect class="box so" width="140" height="130"/>
+      <text class="title" x="10" y="18">SignatureSkillSO</text>
+      <line x1="0" y1="24" x2="140" y2="24" class="line"/>
+      <text x="10" y="40">+ cooldown</text>
+      <text x="10" y="56">+ effectPrefab</text>
+      <text x="10" y="72">+ inputType</text>
+      <text x="10" y="88">  (Tap | Hold)</text>
+      <text x="10" y="104">+ Execute(ctx)</text>
+    </g>
+
+    <!-- WEAPON family -->
+    <g transform="translate(35,525)">
+      <rect class="box mb" width="200" height="135"/>
+      <text class="title abstract" x="10" y="18">«abstract» WeaponBase</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ data: WeaponDataSO</text>
+      <text x="10" y="56">+ level: int</text>
+      <text x="10" y="72">+ HandleAttack()</text>
+      <text x="10" y="88">+ FindTargets(): List&lt;T&gt;</text>
+      <text x="10" y="104">+ ExecuteAttack(targets)</text>
+      <text x="10" y="120">+ OnLevelUp() / Evolve()</text>
+    </g>
+
+    <g transform="translate(255,525)">
+      <rect class="box mb" width="200" height="135"/>
+      <text class="title" x="10" y="18">ProjectileWeapon</text>
+      <text class="title" x="10" y="34">AuraWeapon</text>
+      <text class="title" x="10" y="50">LightningWeapon</text>
+      <text class="title" x="10" y="66">MeteorWeapon</text>
+      <text class="title" x="10" y="82">OrbitWeapon</text>
+      <line x1="0" y1="88" x2="200" y2="88" class="line"/>
+      <text x="10" y="104">override ExecuteAttack()</text>
+      <text x="10" y="120">+ pool: ProjectilePool</text>
+    </g>
+
+    <g transform="translate(475,525)">
+      <rect class="box so" width="200" height="135"/>
+      <text class="title" x="10" y="18">WeaponDataSO</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ id, name, icon, rarity</text>
+      <text x="10" y="56">+ maxLevel = 5..8</text>
+      <text x="10" y="72">+ levels[]: WeaponLevel</text>
+      <text x="10" y="88">  (dmg, rate, range, area)</text>
+      <text x="10" y="104">+ evolveRecipe: EvolveDef</text>
+      <text x="10" y="120">+ tags: WeaponTag[]</text>
+    </g>
+
+    <g transform="translate(695,525)">
+      <rect class="box mb" width="140" height="135"/>
+      <text class="title" x="10" y="18">WeaponInventory</text>
+      <line x1="0" y1="24" x2="140" y2="24" class="line"/>
+      <text x="10" y="40">- weapons[6]</text>
+      <text x="10" y="56">- passives[6]</text>
+      <text x="10" y="72">+ Equip(SO)</text>
+      <text x="10" y="88">+ Upgrade(slot)</text>
+      <text x="10" y="104">+ TryEvolve()</text>
+      <text x="10" y="120">+ HasFreeSlot</text>
+    </g>
+
+    <line x1="195" y1="365" x2="135" y2="380" class="line" marker-end="url(#inherit)"/>
+    <line x1="135" y1="525" x2="135" y2="510" class="line" marker-start="url(#inherit)"/>
+    <line x1="255" y1="585" x2="235" y2="585" class="line" marker-end="url(#inherit)"/>
+    <line x1="455" y1="445" x2="475" y2="445" class="line" marker-end="url(#arrow)"/>
+    <line x1="675" y1="445" x2="695" y2="445" class="line" marker-end="url(#arrow)"/>
+    <line x1="455" y1="595" x2="475" y2="595" class="line" marker-end="url(#arrow)"/>
+    <line x1="675" y1="595" x2="695" y2="595" class="line" marker-end="url(#diamond)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 3: ENEMY -->
+  <!-- ============================================================== -->
+  <g>
+    <rect class="layer-bg" x="870" y="250" width="810" height="430"/>
+    <text class="layer-title" x="885" y="270">3. Enemy &amp; Spawn Layer</text>
+
+    <g transform="translate(885,285)">
+      <rect class="box mb" width="200" height="160"/>
+      <text class="title abstract" x="10" y="18">«abstract» EnemyBase</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ data: EnemyDataSO</text>
+      <text x="10" y="56">+ stats: StatBlock</text>
+      <text x="10" y="72">+ brain: IEnemyBrain</text>
+      <text x="10" y="88">+ Init(spawnCtx)</text>
+      <text x="10" y="104">+ TakeDamage(DamageInfo)</text>
+      <text x="10" y="120">+ Die() → DropXP/Loot</text>
+      <text x="10" y="136">implements IDamageable,</text>
+      <text x="10" y="150">  IPoolable</text>
+    </g>
+
+    <g transform="translate(1105,285)">
+      <rect class="box mb" width="180" height="160"/>
+      <text class="title" x="10" y="18">MeleeEnemy</text>
+      <text class="title" x="10" y="34">RangedEnemy</text>
+      <text class="title" x="10" y="50">SkillCasterEnemy</text>
+      <text class="title" x="10" y="66">EliteEnemy</text>
+      <text class="title" x="10" y="82">BossEnemy</text>
+      <line x1="0" y1="88" x2="180" y2="88" class="line"/>
+      <text x="10" y="104">override brain</text>
+      <text x="10" y="120">override attack pattern</text>
+      <text x="10" y="136">override deathFX</text>
+    </g>
+
+    <g transform="translate(1305,285)">
+      <rect class="box so" width="180" height="160"/>
+      <text class="title" x="10" y="18">EnemyDataSO</text>
+      <line x1="0" y1="24" x2="180" y2="24" class="line"/>
+      <text x="10" y="40">+ id, archetype</text>
+      <text x="10" y="56">+ baseStats</text>
+      <text x="10" y="72">+ attackPattern: SO</text>
+      <text x="10" y="88">+ xpReward, goldDrop</text>
+      <text x="10" y="104">+ scalePerMinute</text>
+      <text x="10" y="120">+ poolWarmup</text>
+      <text x="10" y="136">+ corpseLifetime</text>
+    </g>
+
+    <g transform="translate(1505,285)">
+      <rect class="box iface-bg" width="170" height="160"/>
+      <text class="title iface" x="10" y="18">«interface»</text>
+      <text class="title iface" x="10" y="34">IEnemyBrain</text>
+      <line x1="0" y1="40" x2="170" y2="40" class="line"/>
+      <text x="10" y="56">+ Tick(self, ctx)</text>
+      <text x="10" y="72">+ OnHit(info)</text>
+      <text x="10" y="88">— impls —</text>
+      <text x="10" y="104">ChargerBrain</text>
+      <text x="10" y="120">KiteShooterBrain</text>
+      <text x="10" y="136">CasterBrain</text>
+      <text x="10" y="150">BossPhaseBrain</text>
+    </g>
+
+    <g transform="translate(885,465)">
+      <rect class="box mgr" width="200" height="200"/>
+      <text class="title" x="10" y="18">EnemySpawner</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- pool: EnemyPool</text>
+      <text x="10" y="56">- director: EnemyDirector</text>
+      <text x="10" y="72">- ringRadius: float</text>
+      <text x="10" y="88">+ SpawnWave(WaveEvent)</text>
+      <text x="10" y="104">+ SpawnEliteEvent()</text>
+      <text x="10" y="120">+ DespawnFar(maxDist)</text>
+      <text x="10" y="136">+ FormationSpawn()</text>
+      <text x="10" y="152">    (ring, line, cluster)</text>
+      <text x="10" y="172">events:</text>
+      <text x="10" y="188">  EnemySpawned/Killed</text>
+    </g>
+
+    <g transform="translate(1105,465)">
+      <rect class="box util" width="180" height="200"/>
+      <text class="title" x="10" y="18">WaveEvent (data)</text>
+      <line x1="0" y1="24" x2="180" y2="24" class="line"/>
+      <text x="10" y="40">+ timestamp</text>
+      <text x="10" y="56">+ enemyId</text>
+      <text x="10" y="72">+ count</text>
+      <text x="10" y="88">+ formation</text>
+      <text x="10" y="104">+ eliteFlag</text>
+      <line x1="0" y1="114" x2="180" y2="114" class="line"/>
+      <text class="title" x="10" y="130">WaveDef (SO)</text>
+      <text x="10" y="146">+ events: WaveEvent[]</text>
+      <text x="10" y="162">+ loopFrom: float</text>
+      <text x="10" y="178">+ bossTrigger: int</text>
+    </g>
+
+    <g transform="translate(1305,465)">
+      <rect class="box util" width="180" height="200"/>
+      <text class="title" x="10" y="18">DifficultyCurve</text>
+      <line x1="0" y1="24" x2="180" y2="24" class="line"/>
+      <text x="10" y="40">+ healthCurve</text>
+      <text x="10" y="56">+ damageCurve</text>
+      <text x="10" y="72">+ countCurve</text>
+      <text x="10" y="88">+ Eval(time): float</text>
+      <line x1="0" y1="98" x2="180" y2="98" class="line"/>
+      <text class="title" x="10" y="114">XpDrop</text>
+      <text x="10" y="130">+ amount</text>
+      <text x="10" y="146">+ tier (small/mid/big)</text>
+      <text x="10" y="162">+ magnetisable: bool</text>
+      <text x="10" y="178">+ Collected event</text>
+    </g>
+
+    <g transform="translate(1505,465)">
+      <rect class="box mgr" width="170" height="200"/>
+      <text class="title" x="10" y="18">EnemyPool</text>
+      <line x1="0" y1="24" x2="170" y2="24" class="line"/>
+      <text x="10" y="40">- pools&lt;id, Queue&gt;</text>
+      <text x="10" y="56">+ Get(id, pos): EnemyBase</text>
+      <text x="10" y="72">+ Release(e)</text>
+      <text x="10" y="88">+ Warm(id, n)</text>
+      <line x1="0" y1="100" x2="170" y2="100" class="line"/>
+      <text class="title" x="10" y="116">ProjectilePool</text>
+      <text x="10" y="132">+ Get(prefab): GameObject</text>
+      <text x="10" y="148">+ Release(go)</text>
+      <line x1="0" y1="158" x2="170" y2="158" class="line"/>
+      <text class="title" x="10" y="174">VFXPool / AudioPool</text>
+      <text x="10" y="190">  same pattern</text>
+    </g>
+
+    <line x1="1105" y1="325" x2="1085" y2="325" class="line" marker-end="url(#inherit)"/>
+    <line x1="1285" y1="365" x2="1305" y2="365" class="line" marker-end="url(#arrow)"/>
+    <line x1="1505" y1="365" x2="1485" y2="365" class="line" marker-end="url(#arrow)"/>
+    <line x1="985" y1="465" x2="985" y2="445" class="line" marker-start="url(#diamond)"/>
+    <line x1="1085" y1="525" x2="1105" y2="525" class="line" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 4: PROGRESSION / UPGRADE -->
+  <!-- ============================================================== -->
+  <g>
+    <rect class="layer-bg" x="20" y="700" width="830" height="270"/>
+    <text class="layer-title" x="35" y="720">4. Progression &amp; Upgrade (per-run)</text>
+
+    <g transform="translate(35,735)">
+      <rect class="box mgr" width="200" height="135"/>
+      <text class="title" x="10" y="18">ExperienceSystem</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- xpCurve: AnimationCurve</text>
+      <text x="10" y="56">- magnetRadius: float</text>
+      <text x="10" y="72">+ Collect(XpDrop)</text>
+      <text x="10" y="88">+ XpToNextLevel(lvl)</text>
+      <text x="10" y="104">+ MagnetTick(playerPos)</text>
+      <text x="10" y="120">event: LeveledUp(level)</text>
+    </g>
+
+    <g transform="translate(255,735)">
+      <rect class="box mgr" width="200" height="135"/>
+      <text class="title" x="10" y="18">LevelUpService</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- pool: UpgradePool</text>
+      <text x="10" y="56">- inventory: WeaponInventory</text>
+      <text x="10" y="72">+ RollChoices(n=3)</text>
+      <text x="10" y="88">+ ApplyChoice(UpgradeSO)</text>
+      <text x="10" y="104">+ Reroll() / Skip()</text>
+      <text x="10" y="120">events: ChoicesReady</text>
+    </g>
+
+    <g transform="translate(475,735)">
+      <rect class="box util" width="200" height="135"/>
+      <text class="title" x="10" y="18">UpgradePool</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- all: UpgradeSO[]</text>
+      <text x="10" y="56">- locked, banned</text>
+      <text x="10" y="72">+ Roll(n, rngCtx)</text>
+      <text x="10" y="88">+ Filter(player state)</text>
+      <text x="10" y="104">+ WeightByRarity()</text>
+      <text x="10" y="120">+ HandleEvolveOffer()</text>
+    </g>
+
+    <g transform="translate(695,735)">
+      <rect class="box so" width="140" height="135"/>
+      <text class="title abstract" x="10" y="18">«abstract» UpgradeSO</text>
+      <line x1="0" y1="24" x2="140" y2="24" class="line"/>
+      <text x="10" y="40">+ id, name, icon</text>
+      <text x="10" y="56">+ rarity</text>
+      <text x="10" y="72">+ IsAvailable(ctx)</text>
+      <text x="10" y="88">+ Apply(ctx)</text>
+      <text x="10" y="104">— sub —</text>
+      <text x="10" y="120">Weapon/Passive/Stat/Evo</text>
+    </g>
+
+    <g transform="translate(35,880)">
+      <rect class="box so" width="200" height="80"/>
+      <text class="title" x="10" y="18">PassiveSO</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ statMods[]</text>
+      <text x="10" y="56">+ tagsAffected</text>
+      <text x="10" y="72">+ maxLevel</text>
+    </g>
+
+    <g transform="translate(255,880)">
+      <rect class="box so" width="200" height="80"/>
+      <text class="title" x="10" y="18">EvolveRecipeSO</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ weapon @ maxLvl</text>
+      <text x="10" y="56">+ requiredPassive</text>
+      <text x="10" y="72">+ result: WeaponDataSO</text>
+    </g>
+
+    <g transform="translate(475,880)">
+      <rect class="box util" width="360" height="80"/>
+      <text class="title" x="10" y="18">RngService (seedable)</text>
+      <line x1="0" y1="24" x2="360" y2="24" class="line"/>
+      <text x="10" y="40">+ Seed(int) — same seed ⇒ reproducible run</text>
+      <text x="10" y="56">+ Range, Pick&lt;T&gt;, WeightedPick&lt;T&gt;</text>
+      <text x="10" y="72">+ separate streams: combat / loot / ui</text>
+    </g>
+
+    <line x1="235" y1="800" x2="255" y2="800" class="line" marker-end="url(#arrow)"/>
+    <line x1="455" y1="800" x2="475" y2="800" class="line" marker-end="url(#arrow)"/>
+    <line x1="675" y1="800" x2="695" y2="800" class="line" marker-end="url(#arrow)"/>
+    <line x1="765" y1="870" x2="765" y2="850" class="line" marker-start="url(#inherit)"/>
+    <line x1="135" y1="880" x2="135" y2="870" class="line" marker-end="url(#inherit)"/>
+    <line x1="355" y1="880" x2="355" y2="870" class="line" marker-end="url(#inherit)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 5: META PROGRESSION / SAVE -->
+  <!-- ============================================================== -->
+  <g>
+    <rect class="layer-bg" x="870" y="700" width="810" height="270"/>
+    <text class="layer-title" x="885" y="720">5. Meta Progression &amp; Persistence</text>
+
+    <g transform="translate(885,735)">
+      <rect class="box mgr" width="200" height="220"/>
+      <text class="title" x="10" y="18">MetaProgressionService</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- save: MetaSaveData</text>
+      <text x="10" y="56">+ AddCurrency(gold/gem)</text>
+      <text x="10" y="72">+ Spend(cost): bool</text>
+      <text x="10" y="88">+ Unlock(charId)</text>
+      <text x="10" y="104">+ UnlockWeapon(id)</text>
+      <text x="10" y="120">+ BuyPermUpgrade(id)</text>
+      <text x="10" y="136">+ RegisterRunResult(r)</text>
+      <text x="10" y="152">+ TryUnlockAchievement</text>
+      <text x="10" y="168">+ GetLoadout(): Loadout</text>
+      <text x="10" y="184">events:</text>
+      <text x="10" y="200">  CurrencyChanged,</text>
+      <text x="10" y="216">  UnlockGranted</text>
+    </g>
+
+    <g transform="translate(1105,735)">
+      <rect class="box util" width="180" height="220"/>
+      <text class="title" x="10" y="18">MetaSaveData</text>
+      <line x1="0" y1="24" x2="180" y2="24" class="line"/>
+      <text x="10" y="40">+ gold, gem</text>
+      <text x="10" y="56">+ unlockedChars[]</text>
+      <text x="10" y="72">+ unlockedWeapons[]</text>
+      <text x="10" y="88">+ permUpgradesLevels</text>
+      <text x="10" y="104">+ achievements[]</text>
+      <text x="10" y="120">+ bestRun: RunResult</text>
+      <text x="10" y="136">+ totalKills, totalTime</text>
+      <text x="10" y="152">+ settings (audio, lang)</text>
+      <text x="10" y="168">+ version (migration)</text>
+      <text x="10" y="184">+ lastPlayedChar</text>
+      <text x="10" y="200">+ pinnedLoadout</text>
+    </g>
+
+    <g transform="translate(1305,735)">
+      <rect class="box so" width="180" height="220"/>
+      <text class="title" x="10" y="18">PermUpgradeSO</text>
+      <line x1="0" y1="24" x2="180" y2="24" class="line"/>
+      <text x="10" y="40">+ id, name, icon</text>
+      <text x="10" y="56">+ statType</text>
+      <text x="10" y="72">+ ranks[]: {cost, value}</text>
+      <text x="10" y="88">+ maxRank</text>
+      <text x="10" y="104">+ ApplyTo(StatBlock)</text>
+      <line x1="0" y1="114" x2="180" y2="114" class="line"/>
+      <text class="title" x="10" y="130">AchievementSO</text>
+      <text x="10" y="146">+ trigger: Condition</text>
+      <text x="10" y="162">+ reward: gold/gem/unlock</text>
+      <text x="10" y="178">+ Evaluate(MetaSaveData)</text>
+      <text x="10" y="194">+ progress UI text</text>
+    </g>
+
+    <g transform="translate(1505,735)">
+      <rect class="box mgr" width="170" height="220"/>
+      <text class="title" x="10" y="18">SaveSystem</text>
+      <line x1="0" y1="24" x2="170" y2="24" class="line"/>
+      <text x="10" y="40">+ Save(MetaSaveData)</text>
+      <text x="10" y="56">+ Load(): MetaSaveData</text>
+      <text x="10" y="72">+ Backup() / Restore()</text>
+      <text x="10" y="88">+ MigrateVersion(old)</text>
+      <text x="10" y="104">+ ResetAll()</text>
+      <line x1="0" y1="114" x2="170" y2="114" class="line"/>
+      <text class="title" x="10" y="130">storage strategy</text>
+      <text x="10" y="146">JSON + AES (local)</text>
+      <text x="10" y="162">PersistentDataPath</text>
+      <text x="10" y="178">Cloud (optional later:</text>
+      <text x="10" y="194">Play Games / iCloud)</text>
+      <text x="10" y="210">Atomic write (.tmp)</text>
+    </g>
+
+    <line x1="1085" y1="845" x2="1105" y2="845" class="line" marker-end="url(#diamond)"/>
+    <line x1="1285" y1="845" x2="1305" y2="845" class="line" marker-end="url(#arrow)"/>
+    <line x1="1485" y1="845" x2="1505" y2="845" class="line" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- ============================================================== -->
+  <!-- LAYER 6: INFRASTRUCTURE / UI -->
+  <!-- ============================================================== -->
+  <g>
+    <rect class="layer-bg" x="20" y="990" width="1660" height="270"/>
+    <text class="layer-title" x="35" y="1010">6. Infrastructure, Input &amp; UI</text>
+
+    <g transform="translate(35,1025)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">EventBus (static)</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ Subscribe&lt;T&gt;(handler)</text>
+      <text x="10" y="56">+ Unsubscribe&lt;T&gt;()</text>
+      <text x="10" y="72">+ Publish&lt;T&gt;(evt)</text>
+      <text x="10" y="88">decouples gameplay ↔ UI</text>
+      <text x="10" y="104">no scene refs needed</text>
+    </g>
+
+    <g transform="translate(255,1025)">
+      <rect class="box util" width="200" height="120"/>
+      <text class="title" x="10" y="18">ObjectPool&lt;T&gt;</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- Queue&lt;T&gt; free</text>
+      <text x="10" y="56">+ Get(): T</text>
+      <text x="10" y="72">+ Release(T)</text>
+      <text x="10" y="88">+ Prewarm(n)</text>
+      <text x="10" y="104">implements IPoolable</text>
+    </g>
+
+    <g transform="translate(475,1025)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">InputManager</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ MoveDir: Vector2</text>
+      <text x="10" y="56">+ SkillButtonDown</text>
+      <text x="10" y="72">routes virtual joystick →</text>
+      <text x="10" y="88">CharacterController3D</text>
+      <text x="10" y="104">+ debug keyboard fallback</text>
+    </g>
+
+    <g transform="translate(695,1025)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">UIManager</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- screens: Stack&lt;Screen&gt;</text>
+      <text x="10" y="56">+ Push/Pop screen</text>
+      <text x="10" y="72">+ ShowHUD / Hide</text>
+      <text x="10" y="88">+ ShowLevelUp(choices)</text>
+      <text x="10" y="104">+ ShowResult(RunResult)</text>
+    </g>
+
+    <g transform="translate(915,1025)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">AudioManager</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">- sfxPool, musicSource</text>
+      <text x="10" y="56">+ PlaySfx(id, pos?)</text>
+      <text x="10" y="72">+ Crossfade(music)</text>
+      <text x="10" y="88">+ DuckOnLevelUp()</text>
+      <text x="10" y="104">limit voices for mobile</text>
+    </g>
+
+    <g transform="translate(1135,1025)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">VfxService</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ Spawn(id, pos, dir?)</text>
+      <text x="10" y="56">- VFXPool</text>
+      <text x="10" y="72">caps concurrent particles</text>
+      <text x="10" y="88">budget per platform tier</text>
+      <text x="10" y="104">auto-LOD by distance</text>
+    </g>
+
+    <g transform="translate(1355,1025)">
+      <rect class="box mgr" width="200" height="120"/>
+      <text class="title" x="10" y="18">SceneRouter</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ LoadAsync(SceneId)</text>
+      <text x="10" y="56">+ Transition(fade)</text>
+      <text x="10" y="72">Boot → Menu → Arena</text>
+      <text x="10" y="88">unload Arena on RunEnd</text>
+      <text x="10" y="104">async addressables</text>
+    </g>
+
+    <g transform="translate(35,1160)">
+      <rect class="box iface-bg" width="200" height="90"/>
+      <text class="title iface" x="10" y="18">«interface» IPoolable</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ OnAcquired()</text>
+      <text x="10" y="56">+ OnReleased()</text>
+      <text x="10" y="72">  reset state for reuse</text>
+    </g>
+
+    <g transform="translate(255,1160)">
+      <rect class="box iface-bg" width="200" height="90"/>
+      <text class="title iface" x="10" y="18">«interface» ITickable</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ Tick(dt)</text>
+      <text x="10" y="56">centralised Update loop</text>
+      <text x="10" y="72">  (cheaper than per-MB Update)</text>
+    </g>
+
+    <g transform="translate(475,1160)">
+      <rect class="box util" width="200" height="90"/>
+      <text class="title" x="10" y="18">ServiceLocator</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ Register&lt;T&gt;(svc)</text>
+      <text x="10" y="56">+ Get&lt;T&gt;(): T</text>
+      <text x="10" y="72">no singleton spam</text>
+    </g>
+
+    <g transform="translate(695,1160)">
+      <rect class="box util" width="200" height="90"/>
+      <text class="title" x="10" y="18">QualitySettingsAdaptor</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ DetectTier(): Low/Mid/High</text>
+      <text x="10" y="56">+ ApplyTier()</text>
+      <text x="10" y="72">caps fps, vfx, shadow res</text>
+    </g>
+
+    <g transform="translate(915,1160)">
+      <rect class="box util" width="200" height="90"/>
+      <text class="title" x="10" y="18">PerformanceProfiler</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ avgFps, peakEnemies</text>
+      <text x="10" y="56">+ ReportSpike()</text>
+      <text x="10" y="72">auto-degrade quality</text>
+    </g>
+
+    <g transform="translate(1135,1160)">
+      <rect class="box util" width="200" height="90"/>
+      <text class="title" x="10" y="18">Localization</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ Get(key): string</text>
+      <text x="10" y="56">vi / en at launch</text>
+      <text x="10" y="72">ScriptableObject tables</text>
+    </g>
+
+    <g transform="translate(1355,1160)">
+      <rect class="box util" width="200" height="90"/>
+      <text class="title" x="10" y="18">AnalyticsService</text>
+      <line x1="0" y1="24" x2="200" y2="24" class="line"/>
+      <text x="10" y="40">+ Track(event, props)</text>
+      <text x="10" y="56">runs, kills, deaths, dropoff</text>
+      <text x="10" y="72">implementation later</text>
+    </g>
+  </g>
+
+</svg>
