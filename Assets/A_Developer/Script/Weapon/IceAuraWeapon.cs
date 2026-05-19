@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IceAuraGameObject : WeaponBase
+public class IceAuraWeapon : WeaponBase
 {
     private GameObject spawnedAura;
 
@@ -9,6 +9,7 @@ public class IceAuraGameObject : WeaponBase
     {
         if (spawnedAura != null) return;
 
-        spawnedAura = Instantiate(effectPrefab, transform);
+        spawnedAura = Instantiate(EffectPrefab, transform);
+        InitDamageDealer(spawnedAura);
     }
 }

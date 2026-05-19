@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnergyBoomWeaponBase : WeaponBase
+public class EnergyBoomWeapon : WeaponBase
 {
     [Header("Boom Setting")]
     [SerializeField] private float spawnHeight = 1f;
@@ -11,7 +11,8 @@ public class EnergyBoomWeaponBase : WeaponBase
         foreach (Transform target in targets)
         {
             Vector3 spawnPos = target.position + Vector3.up * spawnHeight;
-            Instantiate(effectPrefab, spawnPos, Quaternion.identity);
+            var go = Instantiate(EffectPrefab, spawnPos, Quaternion.identity);
+            InitDamageDealer(go);
         }
     }
 }

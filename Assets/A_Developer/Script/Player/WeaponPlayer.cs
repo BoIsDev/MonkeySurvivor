@@ -3,10 +3,8 @@ using UnityEngine;
 
 public class WeaponPlayer : MonoBehaviour
 {
-    // Set sẵn trong Editor — pool vũ khí có thể nhận
     [SerializeField] private List<WeaponDataSO> weaponsStore = new List<WeaponDataSO>();
 
-    // Runtime — vũ khí đang trang bị (tự chạy Update của riêng chúng)
     private Dictionary<WeaponType, WeaponBase> weaponsEquip = new Dictionary<WeaponType, WeaponBase>();
 
     public void AddWeaponInventory(WeaponDataSO weaponData)
@@ -18,7 +16,7 @@ public class WeaponPlayer : MonoBehaviour
         }
 
         WeaponBase newWeapon = Instantiate(weaponData.weaponPrefab, transform);
-        newWeapon.weaponData = weaponData;
+        newWeapon.Init(weaponData);
         weaponsEquip.Add(weaponData.weaponType, newWeapon);
     }
 

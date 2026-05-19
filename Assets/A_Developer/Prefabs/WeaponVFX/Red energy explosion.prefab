@@ -39249,6 +39249,8 @@ GameObject:
   - component: {fileID: 4735062236925596180}
   - component: {fileID: 4346215946214315557}
   - component: {fileID: 1299231429176166534}
+  - component: {fileID: 2566471934962745941}
+  - component: {fileID: 551947517414750678}
   m_Layer: 0
   m_Name: Red energy explosion
   m_TagString: Untagged
@@ -42934,7 +42936,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
     type: 0
     collisionMode: 0
@@ -44160,6 +44162,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8cb08b88d2a8d04caf806e2dc5af51c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2566471934962745941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8138510252684544773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9670ad27089c443a060d6be6dc8c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 20
+  knockbackForce: 2.69
+  knockbackDuration: 0.15
+  applyKnockback: 0
+--- !u!135 &551947517414750678
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8138510252684544773}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 3
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1 &8297217696378837079
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8772447191008195940}
   - component: {fileID: 6362786654379184018}
   - component: {fileID: 1134652947648135439}
+  - component: {fileID: 7358306362747930271}
   m_Layer: 0
   m_Name: Freeze circle
   m_TagString: Untagged
@@ -4917,6 +4918,23 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 4
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7358306362747930271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2194063096122678498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9670ad27089c443a060d6be6dc8c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 5
+  knockbackForce: 23.19
+  applyKnockback: 1
+  continuous: 1
+  tickRate: 0.5
 --- !u!1 &2982049810931246625
 GameObject:
   m_ObjectHideFlags: 0

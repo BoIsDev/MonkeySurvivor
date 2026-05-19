@@ -2,63 +2,30 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [Header("Base Data")]
-    public PlayerDataSO data; // ScriptableObject
-
-    [Header("Runtime")]
-    public float currentHealth;
-    public int currentExp;
-    public int level = 1;
+    [SerializeField] private PlayerDataSO data;
 
     public float MoveSpeed { get; private set; }
     public float Damage { get; private set; }
+    public int CurrentExp { get; private set; }
+    public int Level { get; private set; } = 1;
 
-    void Awake()
-    {
-        Init();
-    }
-
-    void Init()
+    private void Awake()
     {
         MoveSpeed = data.moveSpeed;
         Damage = data.damage;
-
-        currentHealth = data.maxHealth;
     }
 
     public void AddExp(int amount)
     {
-        currentExp += amount;
-
-        if (currentExp >= GetExpToNextLevel())
-        {
-            LevelUp();
-        }
+        CurrentExp += amount;
+        if (CurrentExp >= Level * 10) LevelUp();
     }
 
-    public void LevelUp()
+    private void LevelUp()
     {
-        level++;
-        currentExp = 0;
+        Level++;
+        CurrentExp = 0;
         UITestManager.Instance.OpenPaneWeapon();
         Debug.Log("Level Up!");
-    }
-
-    int GetExpToNextLevel()
-    {
-        return level * 10; // ví dụ
-    }
-
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
-
-        if (currentHealth <= 0)
-            Die();
-    }
-
-    void Die()
-    {
-        Debug.Log("Player Dead");
     }
 }
