@@ -3,10 +3,11 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    [Header("Data")] public WeaponDataSO weaponData;
-    [SerializeField] protected LayerMask enemyLayer;
+    [Header("Data")] [SerializeField] private WeaponDataSO weaponData;
+    [SerializeField] private LayerMask enemyLayer;
 
-    [Header("Effect")] [SerializeField] public GameObject effectPrefab;
+    [Header("Effect")] [SerializeField] private GameObject effectPrefab;
+    protected GameObject EffectPrefab => effectPrefab;
 
     [Header("Config")] [SerializeField] protected TargetType targetType;
     [SerializeField] protected AttackType attackType;
@@ -18,6 +19,9 @@ public abstract class WeaponBase : MonoBehaviour
     protected float Range => weaponData.levels[currentLevel].range;
     protected int Damage => weaponData.levels[currentLevel].damage;
     protected int MaxTarget => weaponData.levels[currentLevel].maxTarget;
+
+    // Called by WeaponPlayer after instantiation to inject weapon data at runtime.
+    public void Init(WeaponDataSO data) => weaponData = data;
 
     public void Tick()
     {
@@ -144,6 +148,13 @@ public abstract class WeaponBase : MonoBehaviour
             case AttackType.Aura: AuraDamage(targets); break;
             case AttackType.Meteor: SpawnMeteor(targets); break;
         }
+    }
+
+    // Passes the current damage value to the DamageDealer on a spawned effect prefab.
+    protected void InitDamageDealer(GameObject go)
+    {
+        go.GetComponent<DamageDealer>()?.SetDamage(Damage);
+        Debug.Log("Game Object Damage Dealer " + go + " damage " + Damage );
     }
 
     protected virtual void SpawnProjectile(Transform target)

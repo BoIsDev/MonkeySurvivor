@@ -15,5 +15,5 @@ public class EnemyDataSO : ScriptableObject
 public enum EnemyStyle
 {
     Melee,
-    magic
+    Magic
 }

@@ -19638,6 +19638,7 @@ GameObject:
   - component: {fileID: 2063292828518947965}
   - component: {fileID: 5995289493559904229}
   - component: {fileID: 2568915224403732148}
+  - component: {fileID: 602802098777766190}
   m_Layer: 0
   m_Name: Slash_A
   m_TagString: Untagged
@@ -24461,6 +24462,22 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &602802098777766190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7835715075385094429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad9670ad27089c443a060d6be6dc8c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 25
+  knockbackForce: 74.75
+  knockbackDuration: 0
+  applyKnockback: 1
 --- !u!1 &9201284029273267502
 GameObject:
   m_ObjectHideFlags: 0

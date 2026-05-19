@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Monkey_Magic
   m_EditorClassIdentifier: 
   enemyStyle: 1
-  maxHealth: 10
+  maxHealth: 15
   moveSpeed: 2
   damage: 5
   attackRange: 5
