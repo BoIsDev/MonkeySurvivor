@@ -9,7 +9,14 @@ public class IceAuraWeapon : WeaponBase
     {
         if (spawnedAura != null) return;
 
-        spawnedAura = Instantiate(EffectPrefab, transform);
+        spawnedAura = PoolManager.Instance.Spawn(EffectPrefab, transform.position, Quaternion.identity);
+        spawnedAura.transform.SetParent(transform);
         InitDamageDealer(spawnedAura);
+    }
+
+    private void OnDestroy()
+    {
+        if (spawnedAura != null)
+            PoolManager.Instance.Despawn(EffectPrefab, spawnedAura);
     }
 }

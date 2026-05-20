@@ -14,7 +14,7 @@ public class SlashFireWeapon : WeaponBase
 
         Quaternion rot = Quaternion.LookRotation(-dir);
 
-        GameObject slash = Instantiate(EffectPrefab, spawnPos, rot);
+        GameObject slash = PoolManager.Instance.Spawn(EffectPrefab, spawnPos, rot);
         slash.transform.SetParent(transform);
         InitDamageDealer(slash);
     }
