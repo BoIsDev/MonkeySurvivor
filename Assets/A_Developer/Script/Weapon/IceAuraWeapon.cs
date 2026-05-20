@@ -16,7 +16,7 @@ public class IceAuraWeapon : WeaponBase
 
     private void OnDestroy()
     {
-        if (spawnedAura != null)
+        if (spawnedAura != null && PoolManager.Instance != null)
             PoolManager.Instance.Despawn(EffectPrefab, spawnedAura);
     }
 }

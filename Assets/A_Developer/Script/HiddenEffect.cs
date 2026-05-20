@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class HiddenEffect : MonoBehaviour
 {
+    [SerializeField] private float lifetime = 2f;
+
     private GameObject _prefab;
 
     // Gọi bởi PoolManager lúc Spawn — không cần gán tay trong Inspector
@@ -9,7 +11,7 @@ public class HiddenEffect : MonoBehaviour
 
     void OnEnable()
     {
-        Invoke(nameof(Hide), 2f);
+        Invoke(nameof(Hide), lifetime);
     }
 
     void OnDisable()

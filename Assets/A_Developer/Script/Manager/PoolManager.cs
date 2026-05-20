@@ -7,7 +7,7 @@ public class PoolManager : MonoBehaviour
 
     [SerializeField] private Transform parentSpawn;
 
-    [SerializeField] private Dictionary<GameObject, Queue<GameObject>> _poolDict = new();
+    private Dictionary<GameObject, Queue<GameObject>> _poolDict = new();
 
     void Awake()
     {
