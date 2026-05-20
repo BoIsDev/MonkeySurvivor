@@ -965,8 +965,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbead2550b9ec7e43bc6bd04bc0df805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 0.15
-  cooldown: 1
 --- !u!4 &692865611 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6864047247321200759, guid: 9f9e5972d4aa84545b6da5d63c048d25, type: 3}
@@ -1252,6 +1250,51 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f9e5972d4aa84545b6da5d63c048d25, type: 3}
+--- !u!1 &1067836194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1067836196}
+  - component: {fileID: 1067836195}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1067836195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067836194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3209cde0190918f44b299da9fbaac245, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentSpawn: {fileID: 1067836196}
+--- !u!4 &1067836196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067836194}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.03339872, y: 0, z: 11.071506}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1094255069
 GameObject:
   m_ObjectHideFlags: 0
@@ -4434,7 +4477,6 @@ GameObject:
   - component: {fileID: 4959586063736441792}
   - component: {fileID: 4959586063736441794}
   - component: {fileID: 4959586063736441793}
-  - component: {fileID: 4959586063736441795}
   m_Layer: 3
   m_Name: Chibi_Monkey_08
   m_TagString: Enemy
@@ -8007,20 +8049,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   invincibleDuration: 0
---- !u!114 &4959586063736441795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835218254322240382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbead2550b9ec7e43bc6bd04bc0df805, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duration: 0.1
-  cooldown: 0.5
 --- !u!1 &4966754707834351527
 GameObject:
   m_ObjectHideFlags: 0
@@ -8146,7 +8174,6 @@ GameObject:
   - component: {fileID: 61467125}
   - component: {fileID: 5608089313518503477}
   - component: {fileID: 5608089313518503476}
-  - component: {fileID: 5608089313518503478}
   m_Layer: 3
   m_Name: Chibi_Monkey_04
   m_TagString: Enemy
@@ -8697,20 +8724,6 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: fdd40d6f04138e248944f79fd0915245, type: 2}
   animator: {fileID: 1960125011428809803}
   magicProjectilePrefab: {fileID: 0}
---- !u!114 &5608089313518503478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5086885220454440075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbead2550b9ec7e43bc6bd04bc0df805, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duration: 0.1
-  cooldown: 0.5
 --- !u!4 &5619149960828820714
 Transform:
   m_ObjectHideFlags: 0
@@ -9617,7 +9630,6 @@ GameObject:
   - component: {fileID: 850149179}
   - component: {fileID: 6558351569252192153}
   - component: {fileID: 6558351569252192152}
-  - component: {fileID: 6558351569252192154}
   m_Layer: 3
   m_Name: Chibi_Monkey_01
   m_TagString: Enemy
@@ -9704,20 +9716,6 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: fdd40d6f04138e248944f79fd0915245, type: 2}
   animator: {fileID: 479649274018828117}
   magicProjectilePrefab: {fileID: 0}
---- !u!114 &6558351569252192154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6558351569252192149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbead2550b9ec7e43bc6bd04bc0df805, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duration: 0.1
-  cooldown: 0.5
 --- !u!1 &6560462628750601349
 GameObject:
   m_ObjectHideFlags: 0
@@ -13022,3 +13020,4 @@ SceneRoots:
   - {fileID: 540578750}
   - {fileID: 986600887}
   - {fileID: 51067715}
+  - {fileID: 1067836196}

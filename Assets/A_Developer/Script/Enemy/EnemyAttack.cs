@@ -33,7 +33,7 @@ public class EnemyAttack : MonoBehaviour
         animator.SetTrigger("Attacking");
         if (magicProjectilePrefab == null) return;
 
-        var go = Instantiate(magicProjectilePrefab, transform.position, Quaternion.identity);
+        var go = PoolManager.Instance.Spawn(magicProjectilePrefab, transform.position, Quaternion.identity);
         go.GetComponent<DamageDealer>()?.SetDamage(data.damage);
     }
 }

@@ -11,7 +11,7 @@ public class EnergyBoomWeapon : WeaponBase
         foreach (Transform target in targets)
         {
             Vector3 spawnPos = target.position + Vector3.up * spawnHeight;
-            var go = Instantiate(EffectPrefab, spawnPos, Quaternion.identity);
+            var go = PoolManager.Instance.Spawn(EffectPrefab, spawnPos, Quaternion.identity);
             InitDamageDealer(go);
         }
     }
