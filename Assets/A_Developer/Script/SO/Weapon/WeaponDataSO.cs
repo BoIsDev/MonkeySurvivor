@@ -18,6 +18,9 @@ public class WeaponDataSO : ScriptableObject
 
     [Header("Levels")]
     public WeaponLevelData[] levels;
+
+    [Header("Evolution")]
+    public WeaponDataSO evolvedData;
 }
 
 [System.Serializable]
