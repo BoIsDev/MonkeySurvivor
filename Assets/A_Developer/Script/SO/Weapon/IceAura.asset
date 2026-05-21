@@ -30,3 +30,16 @@ MonoBehaviour:
     range: 8
     damage: 20
     maxTarget: 5
+  - attackRate: 0.1
+    range: 8
+    damage: 20
+    maxTarget: 5
+  - attackRate: 0.1
+    range: 8
+    damage: 20
+    maxTarget: 5
+  - attackRate: 0.1
+    range: 8
+    damage: 20
+    maxTarget: 5
+  evolvedData: {fileID: 11400000, guid: 59d5b66b77f741745bf15f80578907f5, type: 2}

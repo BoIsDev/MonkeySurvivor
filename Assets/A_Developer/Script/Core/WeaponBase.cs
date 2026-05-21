@@ -29,6 +29,8 @@ public abstract class WeaponBase : MonoBehaviour
         HandleAttack();
     }
 
+    public bool IsMaxLevel => weaponData != null && currentLevel >= weaponData.levels.Length - 1;
+
     public void LevelUp()
     {
         if (currentLevel < weaponData.levels.Length - 1)
