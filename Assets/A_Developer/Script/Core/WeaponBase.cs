@@ -23,6 +23,8 @@ public abstract class WeaponBase : MonoBehaviour
     // Called by WeaponPlayer after instantiation to inject weapon data at runtime.
     public void Init(WeaponDataSO data) => weaponData = data;
 
+    public WeaponDataSO WeaponData => weaponData;
+
     public void Tick()
     {
         if (weaponData == null) return;

@@ -6,14 +6,13 @@ public class WeaponPlayer : MonoBehaviour
     [SerializeField] private List<WeaponDataSO> weaponsStore = new List<WeaponDataSO>();
 
     private Dictionary<WeaponType, WeaponBase> weaponsEquip = new Dictionary<WeaponType, WeaponBase>();
-    private Dictionary<WeaponType, WeaponDataSO> weaponDataMap = new Dictionary<WeaponType, WeaponDataSO>();
 
     public void AddWeaponInventory(WeaponDataSO weaponData)
     {
         if (weaponsEquip.ContainsKey(weaponData.weaponType))
         {
             var weapon = weaponsEquip[weaponData.weaponType];
-            var currentData = weaponDataMap[weaponData.weaponType];
+            var currentData = weapon.WeaponData;
 
             if (weapon.IsMaxLevel && currentData.evolvedData != null)
                 EvolveWeapon(weaponData.weaponType, currentData.evolvedData);
@@ -25,7 +24,6 @@ public class WeaponPlayer : MonoBehaviour
         WeaponBase newWeapon = Instantiate(weaponData.weaponPrefab, transform);
         newWeapon.Init(weaponData);
         weaponsEquip.Add(weaponData.weaponType, newWeapon);
-        weaponDataMap.Add(weaponData.weaponType, weaponData);
     }
 
     private void EvolveWeapon(WeaponType type, WeaponDataSO evolvedData)
@@ -36,7 +34,6 @@ public class WeaponPlayer : MonoBehaviour
         evolved.Init(evolvedData);
 
         weaponsEquip[type] = evolved;
-        weaponDataMap[type] = evolvedData;
 
         Debug.Log($"[WeaponPlayer] {type} evolved → {evolvedData.weaponName}");
     }

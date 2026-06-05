@@ -26,3 +26,4 @@ MonoBehaviour:
     range: 5
     damage: 50
     maxTarget: 1
+  evolvedData: {fileID: 11400000}

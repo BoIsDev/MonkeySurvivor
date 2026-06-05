@@ -6,7 +6,7 @@ public class Health : MonoBehaviour, IDamageable
 {
     [SerializeField] private float maxHealth;
     [SerializeField] private float invincibleDuration = 0f;
-
+    [SerializeField] private float currentHealth;
     public float Current { get; private set; }
     public float Max => maxHealth;
 
@@ -20,10 +20,12 @@ public class Health : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         if (isInvincible) return;
+        if (Current <= 0f) return;
         Current = Mathf.Max(0f, Current - amount);
         OnDamageTaken?.Invoke(amount);
         if (Current <= 0f) { OnDied?.Invoke(); return; }
         if (invincibleDuration > 0f) StartCoroutine(InvincibilityRoutine());
+        currentHealth = Current;
         Debug.Log("Debug HP " + Current);
     }
 
