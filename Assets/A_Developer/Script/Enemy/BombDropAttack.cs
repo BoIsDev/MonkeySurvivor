@@ -31,11 +31,11 @@ public class BombDropAttack : EnemyAttackBase
         }
         transform.position = peakPos;
 
-        // Spawn bomb tại đỉnh
+        // Spawn bomb at peak position
         GameObject bomb = PoolManager.Instance.Spawn(bombPrefab, transform.position, Quaternion.identity);
         bomb.GetComponent<BombProjectile>()?.Launch(bombPrefab, targetPos, fallDuration, explosionRadius, damage);
 
-        // Phase 2: Đáp xuống song song với bomb rơi
+        // Phase 2: Land in parallel with falling bomb
         elapsed = 0f;
         while (elapsed < fallDuration)
         {

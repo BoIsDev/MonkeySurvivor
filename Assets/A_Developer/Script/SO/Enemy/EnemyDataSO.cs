@@ -22,7 +22,7 @@ public class EnemyDataSO : ScriptableObject
 
 public enum ZombieType
 {
-    Normal,
+    NotClothed,
     Clothed,
     Special
 }
@@ -30,6 +30,7 @@ public enum ZombieType
 public enum MovementStyle
 {
     Tank,
-    Normal,
-    Crawl
+    Default,
+    Crawl,
+    Fly
 }

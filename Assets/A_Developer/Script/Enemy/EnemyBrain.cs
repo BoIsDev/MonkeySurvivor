@@ -51,10 +51,10 @@ public class EnemyBrain : MonoBehaviour
 
         bool isExecuting = attack != null && attack.IsExecuting;
 
-        // Luôn nhìn về player trừ khi đang charge (Hulk đã lock hướng rồi)
+        // Always face player unless charging (Hulk locks direction at charge start)
         if (!isExecuting) FacePlayer();
 
-        // Đang trong attack → không check state, không move, chờ xong mới re-evaluate
+        // Currently attacking → skip state check and movement, wait until done
         if (isExecuting) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
@@ -111,14 +111,14 @@ public class EnemyBrain : MonoBehaviour
         MoveTo(player.position, data.moveSpeed);
     }
 
-    // EnemyBrain làm chủ toàn bộ movement — attack scripts gọi vào đây thay vì tự move transform
+    // EnemyBrain owns all movement — attack scripts call this instead of moving transform directly
     public void MoveTo(Vector3 target, float speed)
     {
         Vector3 flatTarget = new Vector3(target.x, transform.position.y, target.z);
         transform.position = Vector3.MoveTowards(transform.position, flatTarget, speed * Time.deltaTime);
     }
 
-    // Rotation tách riêng — Update() quyết định khi nào gọi
+    // Rotation separated — Update() decides when to call
     private void FacePlayer()
     {
         Vector3 dir = (player.position - transform.position);
@@ -132,7 +132,7 @@ public class EnemyBrain : MonoBehaviour
     private void OnDamaged(float amount)
     {
         if (currentState == StateEnemy.Dead) return;
-        attack?.Cancel(); // dừng mọi coroutine attack đang chạy
+        attack?.Cancel(); // stop all running attack coroutines
         SetState(StateEnemy.Damaged);
         StartCoroutine(DamagedRoutine());
     }

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Zombie_Clothed_Tank
   m_EditorClassIdentifier: 
   zombieType: 1
-  movementStyle: 2
+  movementStyle: 0
   maxHealth: 100
   moveSpeed: 2
   damage: 10
-  attackRange: 1
-  attackRate: 1
+  attackRange: 10
+  attackRate: 5
+  expReward: 5

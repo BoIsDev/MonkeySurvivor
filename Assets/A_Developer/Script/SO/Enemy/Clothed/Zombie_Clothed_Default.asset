@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 118bc8f1290af784e8ff446cedfd0126, type: 3}
-  m_Name: Zombie_Mutated_Tank
+  m_Name: Zombie_Clothed_Default
   m_EditorClassIdentifier: 
-  zombieType: 2
-  movementStyle: 0
+  zombieType: 1
+  movementStyle: 1
   maxHealth: 100
   moveSpeed: 2
   damage: 10
-  attackRange: 15
-  attackRate: 5
+  attackRange: 2
+  attackRate: 1
+  expReward: 5

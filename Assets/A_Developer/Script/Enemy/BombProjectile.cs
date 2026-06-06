@@ -37,7 +37,7 @@ public class BombProjectile : MonoBehaviour
         Explode();
     }
 
-    // OverlapSphere đúng cho bomb — nổ AOE cùng lúc nhiều target
+    // OverlapSphere is correct for bomb — instant AOE damages multiple targets at once
     private void Explode()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius, damageableLayer);
