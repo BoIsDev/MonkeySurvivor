@@ -19640,6 +19640,7 @@ GameObject:
   - component: {fileID: 2568915224403732148}
   - component: {fileID: 602802098777766190}
   - component: {fileID: 713612753935609733}
+  - component: {fileID: 1045794158980679030}
   m_Layer: 0
   m_Name: Slash_A
   m_TagString: Untagged
@@ -24478,6 +24479,8 @@ MonoBehaviour:
   damage: 25
   continuous: 0
   tickRate: 0.5
+  useHalfSphere: 1
+  halfAngle: 90
 --- !u!114 &713612753935609733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24490,6 +24493,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8cb08b88d2a8d04caf806e2dc5af51c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lifetime: 2
+--- !u!135 &1045794158980679030
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7835715075385094429}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9201284029273267502
 GameObject:
   m_ObjectHideFlags: 0

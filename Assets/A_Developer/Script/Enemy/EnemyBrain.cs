@@ -1,44 +1,81 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class EnemyBrain : MonoBehaviour
 {
-    public enum StateEnemy { Idle, Run, Attack, Dead }
+    public enum StateEnemy { Run, Idle, Attack, Damaged, Dead }
 
     [Header("Refs")]
     [SerializeField] private Animator animator;
     [SerializeField] private EnemyDataSO data;
     [SerializeField] private Health health;
-    [SerializeField] private EnemyAttack attack;
+    private EnemyAttackBase attack;
     private Transform player;
+    private PlayerStats playerStats;
     private StateEnemy currentState;
+
+    private GameObject _sourcePrefab;
+    private Action _onDeactivated;
+
+    public void InitSpawner(GameObject sourcePrefab, Action onDeactivated)
+    {
+        _sourcePrefab = sourcePrefab;
+        _onDeactivated = onDeactivated;
+    }
 
     private void OnEnable()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        player = playerObj?.transform;
+        playerStats = playerObj?.GetComponent<PlayerStats>();
+
+        attack = GetComponent<EnemyAttackBase>();
+        attack?.Init(data);
         health.OnDied += OnDead;
-        SetState(StateEnemy.Idle);
+        health.OnDamageTaken += OnDamaged;
+
+        currentState = StateEnemy.Dead; // force reset 
+        SetState(StateEnemy.Run);
     }
 
-    private void OnDisable() => health.OnDied -= OnDead;
+    private void OnDisable()
+    {
+        health.OnDied -= OnDead;
+        health.OnDamageTaken -= OnDamaged;
+    }
 
     private void Update()
     {
-        if (player == null || currentState == StateEnemy.Dead) return;
+        if (player == null || currentState == StateEnemy.Dead || currentState == StateEnemy.Damaged) return;
+
+        bool isExecuting = attack != null && attack.IsExecuting;
+
+        // Always face player unless charging (Hulk locks direction at charge start)
+        if (!isExecuting) FacePlayer();
+
+        // Currently attacking → skip state check and movement, wait until done
+        if (isExecuting) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance > data.attackRange)
             SetState(StateEnemy.Run);
-        else
+        else if (attack != null && attack.IsExecuting)
             SetState(StateEnemy.Attack);
+        else
+            SetState(StateEnemy.Idle);
 
         switch (currentState)
         {
             case StateEnemy.Run:
                 MoveToPlayer();
                 break;
+            case StateEnemy.Idle:
+                bool fired = attack != null && attack.TryAttack(player);
+                if (fired) animator.SetTrigger("Attacking");
+                break;
             case StateEnemy.Attack:
-                attack.TryAttack(player);
                 break;
         }
     }
@@ -50,34 +87,91 @@ public class EnemyBrain : MonoBehaviour
 
         switch (currentState)
         {
-            case StateEnemy.Idle:
-                animator.SetFloat("EnemyMoving_BL", 0);
-                break;
             case StateEnemy.Run:
-                animator.SetFloat("EnemyMoving_BL", 1);
+                animator.SetBool("isWalking", true);
+                break;
+            case StateEnemy.Idle:
+                animator.SetBool("isWalking", false);
+                break;
+            case StateEnemy.Attack:
+                animator.SetBool("isWalking", false);
+                break;
+            case StateEnemy.Damaged:
+                animator.SetTrigger("Damaging");
                 break;
             case StateEnemy.Dead:
-                animator.SetFloat("EnemyMoving_BL", 0);
+                animator.SetBool("isDied", true);
                 break;
         }
     }
 
     private void MoveToPlayer()
     {
-        Vector3 dir = (player.position - transform.position).normalized;
-        dir.y = 0;
-        transform.position += dir * data.moveSpeed * Time.deltaTime;
+        if (attack != null && attack.IsExecuting) return;
+        MoveTo(player.position, data.moveSpeed);
+    }
 
-        if (dir != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
-        }
+    // EnemyBrain owns all movement — attack scripts call this instead of moving transform directly
+    public void MoveTo(Vector3 target, float speed)
+    {
+        Vector3 flatTarget = new Vector3(target.x, transform.position.y, target.z);
+        transform.position = Vector3.MoveTowards(transform.position, flatTarget, speed * Time.deltaTime);
+    }
+
+    // Rotation separated — Update() decides when to call
+    private void FacePlayer()
+    {
+        Vector3 dir = (player.position - transform.position);
+        dir.y = 0;
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+    }
+
+    private void OnDamaged(float amount)
+    {
+        if (currentState == StateEnemy.Dead) return;
+        attack?.Cancel(); // stop all running attack coroutines
+        SetState(StateEnemy.Damaged);
+        StartCoroutine(DamagedRoutine());
+    }
+
+    private IEnumerator DamagedRoutine()
+    {
+        yield return null;
+        float duration = animator.GetCurrentAnimatorStateInfo(0).length;
+        yield return new WaitForSeconds(duration);
+        SetState(StateEnemy.Run);
     }
 
     private void OnDead()
     {
+        attack?.Cancel();
+        playerStats?.AddExp(data.expReward);
         SetState(StateEnemy.Dead);
-        gameObject.SetActive(false);
+        StartCoroutine(DeathRoutine());
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        yield return null;
+        float duration = animator.GetCurrentAnimatorStateInfo(0).length;
+        yield return new WaitForSeconds(duration);
+
+        _onDeactivated?.Invoke();
+        _onDeactivated = null;
+
+        if (_sourcePrefab != null)
+            PoolManager.Instance.Despawn(_sourcePrefab, gameObject);
+        else
+            gameObject.SetActive(false);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (data == null) return;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, data.attackRange);
     }
 }

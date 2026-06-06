@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Enemy System Diagram</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1e1e2e;
+    color: #cdd6f4;
+    margin: 0;
+    padding: 30px;
+  }
+  h1 {
+    color: #f9e2af;
+    border-bottom: 2px solid #45475a;
+    padding-bottom: 10px;
+  }
+  h2 {
+    color: #89b4fa;
+    margin-top: 40px;
+  }
+  .diagram {
+    background: #313244;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    overflow-x: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .legend {
+    background: #181825;
+    border-left: 4px solid #f38ba8;
+    padding: 12px 18px;
+    margin: 15px 0;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  code {
+    background: #45475a;
+    color: #f9e2af;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧟 Enemy System — Full Flow Diagram</h1>
+
+<h2>1. State Machine (EnemyBrain)</h2>
+<div class="diagram">
+<pre class="mermaid">
+stateDiagram-v2
+    direction TB
+    [*] --> RUN: OnEnable<br/>FindPlayer · Init · Subscribe
+
+    RUN --> ATTACK: distance ≤ attackRange
+    ATTACK --> RUN: distance > attackRange
+
+    RUN --> DAMAGED: health.OnDamageTaken
+    ATTACK --> DAMAGED: health.OnDamageTaken
+    DAMAGED --> RUN: animation kết thúc
+
+    RUN --> DEAD: health.OnDied
+    ATTACK --> DEAD: health.OnDied
+    DAMAGED --> DEAD: health.OnDied
+
+    DEAD --> [*]: animation kết thúc<br/>SetActive(false)
+</pre>
+</div>
+
+<div class="legend">
+  <strong>Ghi chú:</strong><br>
+  • <code>RUN</code> – di chuyển về phía player<br>
+  • <code>ATTACK</code> – gọi <code>TryAttack()</code> mỗi frame, cooldown trong <code>EnemyAttackBase</code><br>
+  • <code>DAMAGED</code> – frozen trong animation hit react<br>
+  • <code>DEAD</code> – chờ animation chết → trả về pool
+</div>
+
+<h2>2. Update Loop chi tiết</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TD
+    Start([Update mỗi frame]) --> CheckDeadDmg{state == Dead<br/>hoặc Damaged?}
+    CheckDeadDmg -->|YES| Return([return])
+    CheckDeadDmg -->|NO| CalcDist[Tính distance đến player]
+
+    CalcDist --> CheckRange{distance > attackRange?}
+    CheckRange -->|YES| SetRun[SetState Run]
+    CheckRange -->|NO| SetAtk[SetState Attack]
+
+    SetRun --> MovePlayer[MoveToPlayer<br/>nếu attack không IsExecuting]
+    SetAtk --> TryAtk[attack.TryAttack player]
+
+    TryAtk --> CheckExec{IsExecuting?}
+    CheckExec -->|YES| Skip1([skip])
+    CheckExec -->|NO| CheckCD{Time.time<br/>≥ nextAttackTime?}
+    CheckCD -->|NO| Skip2([skip — chờ cooldown])
+    CheckCD -->|YES| Fire[OnAttackFired event<br/>+ ExecuteAttack]
+
+    Fire --> TriggerAnim[Brain nhận event<br/>SetTrigger Attacking]
+    Fire --> ExecImpl[Execute concrete:<br/>Melee / Hulk / BombDrop]
+
+    style Fire fill:#f9e2af,color:#1e1e2e
+    style TriggerAnim fill:#a6e3a1,color:#1e1e2e
+    style ExecImpl fill:#a6e3a1,color:#1e1e2e
+</pre>
+</div>
+
+<h2>3. Damage Pipeline — Weapon → Enemy</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    W1[WeaponBase<br/>OverlapSphere enemyLayer] --> DD[DamageDealer<br/>OnTriggerEnter]
+    DD --> HalfCheck{useHalfSphere?}
+    HalfCheck -->|YES| AngleCheck{angle<br/>< halfAngle?}
+    AngleCheck -->|NO| Skip([❌ skip])
+    AngleCheck -->|YES| Take[Health.TakeDamage]
+    HalfCheck -->|NO| Take
+
+    Take --> Guard1{isInvincible<br/>hoặc HP≤0?}
+    Guard1 -->|YES| Block([❌ block])
+    Guard1 -->|NO| Reduce[HP giảm]
+
+    Reduce --> Check{HP ≤ 0?}
+    Check -->|YES| Died[OnDied<br/>→ EnemyBrain.OnDead]
+    Check -->|NO| Dmg[OnDamageTaken<br/>→ EnemyBrain.OnDamaged]
+
+    Died --> Dead[(state: DEAD)]
+    Dmg --> Damaged[(state: DAMAGED)]
+
+    style Died fill:#f38ba8,color:#1e1e2e
+    style Dmg fill:#fab387,color:#1e1e2e
+</pre>
+</div>
+
+<h2>4. Damage Pipeline — Enemy → Player</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    Melee[MeleeAttack<br/>ExecuteAttack] --> Direct[player.TakeDamage<br/>trực tiếp]
+    Hulk[HulkAttack<br/>ChargeRoutine] --> Sphere[OverlapSphere<br/>playerLayer]
+    Sphere --> Direct
+    Bomb[BombDropAttack] --> Spawn[PoolManager.Spawn<br/>bombPrefab]
+    Spawn --> Lerp[BombProjectile<br/>Lerp tới targetPos]
+    Lerp --> Sphere2[OverlapSphere<br/>playerLayer]
+    Sphere2 --> Direct
+    Sphere2 --> Despawn[PoolManager.Despawn]
+
+    Direct --> HP[Health.TakeDamage]
+    HP --> Die{HP ≤ 0?}
+    Die -->|YES| YouDied[PlayerStats.OnDied<br/>Debug.Log 'You Died']
+    Die -->|NO| Continue([tiếp tục])
+
+    style YouDied fill:#f38ba8,color:#1e1e2e
+    style Direct fill:#cba6f7,color:#1e1e2e
+</pre>
+</div>
+
+<h2>5. Attack Behavior — Polymorphism</h2>
+<div class="diagram">
+<pre class="mermaid">
+classDiagram
+    class EnemyAttackBase {
+        <<abstract>>
+        #damage: float
+        #attackRate: float
+        -nextAttackTime: float
+        +IsExecuting: bool
+        +OnAttackFired: event
+        +Init(EnemyDataSO)
+        +TryAttack(Transform)
+        #ExecuteAttack(Transform)* abstract
+        +Cancel()
+    }
+    class MeleeAttack {
+        +ExecuteAttack(): TakeDamage trực tiếp
+    }
+    class HulkAttack {
+        -chargeSpeed, chargeDuration, aoeRadius
+        -playerLayer: LayerMask
+        +ExecuteAttack(): ChargeRoutine
+        +Cancel(): StopAllCoroutines
+    }
+    class BombDropAttack {
+        -bombPrefab, riseHeight, fallDuration
+        +ExecuteAttack(): BombRoutine
+        +Cancel(): StopAllCoroutines
+    }
+    EnemyAttackBase <|-- MeleeAttack
+    EnemyAttackBase <|-- HulkAttack
+    EnemyAttackBase <|-- BombDropAttack
+
+    class EnemyBrain {
+        -attack: EnemyAttackBase
+        +SetState(StateEnemy)
+        +OnDamaged()
+        +OnDead()
+    }
+    EnemyBrain --> EnemyAttackBase: composition
+</pre>
+</div>
+
+<h2>6. Spawn & Despawn (Pool)</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    Spawn[PoolManager.Spawn<br/>prefab, pos, rot] --> CheckQ{Pool có sẵn?}
+    CheckQ -->|YES| Dequeue[Lấy từ Queue]
+    CheckQ -->|NO| Inst[Instantiate mới]
+    Dequeue --> Init[HiddenEffect.Init prefab]
+    Inst --> Init
+    Init --> Active[SetActive true]
+
+    Active -.->|hết lifetime hoặc<br/>damage xong| Despawn[PoolManager.Despawn]
+    Despawn --> Enqueue[Queue lại pool]
+    Enqueue --> Off[SetActive false]
+</pre>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#89b4fa',
+      primaryTextColor: '#1e1e2e',
+      primaryBorderColor: '#74c7ec',
+      lineColor: '#cdd6f4',
+      secondaryColor: '#a6e3a1',
+      tertiaryColor: '#fab387',
+      background: '#313244',
+      mainBkg: '#89b4fa',
+      secondBkg: '#a6e3a1'
+    },
+    flowchart: { curve: 'basis', padding: 20 },
+    stateDiagram: { padding: 20 }
+  });
+</script>
+</body>
+</html>
