@@ -27,7 +27,7 @@ public class UITestManager : MonoBehaviour
         panelChoiceWeapon.gameObject.SetActive(false);
     }
 
-    // Gán vào OnClick nút "Level Up"
+    // Hooked up to the "Level Up" button's OnClick in the Inspector.
     public void OnClickLevelUp()
     {
         panelChoiceWeapon.gameObject.SetActive(true);

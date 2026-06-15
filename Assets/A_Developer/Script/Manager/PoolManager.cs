@@ -25,7 +25,7 @@ public class PoolManager : MonoBehaviour
 
         obj.transform.SetPositionAndRotation(pos, rot);
 
-        // Auto-inject prefab reference vào HiddenEffect để Despawn đúng queue
+        // Auto-inject the prefab reference into HiddenEffect so it despawns back into the correct queue.
         var hidden = obj.GetComponent<HiddenEffect>();
         if (hidden != null) hidden.Init(prefab);
 

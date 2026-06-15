@@ -22,8 +22,30 @@ MonoBehaviour:
     range: 3
     damage: 30
     maxTarget: 1
-  - attackRate: 1
+    effectScale: 2
+  - attackRate: 0.8
     range: 5
+    damage: 40
+    maxTarget: 1
+    effectScale: 2.2
+  - attackRate: 0.8
+    range: 5
+    damage: 40
+    maxTarget: 1
+    effectScale: 2.4
+  - attackRate: 0.5
+    range: 8
     damage: 50
     maxTarget: 1
-  evolvedData: {fileID: 11400000}
+    effectScale: 2.5
+  - attackRate: 0.5
+    range: 10
+    damage: 60
+    maxTarget: 1
+    effectScale: 2.8
+  - attackRate: 1
+    range: 10
+    damage: 80
+    maxTarget: 1
+    effectScale: 1
+  evolvedPrefab: {fileID: 51278554031856105, guid: 70bc72c7e0cd71f449e31859a9a4153d, type: 3}

@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Spawns a slash effect in front of the player, facing the closest enemy.
-/// </summary>
-public class SlashFireWeapon : WeaponBase
+public class SlashShootWeapon : WeaponBase
 {
     [SerializeField] private float spawnDistance = 1f;
 

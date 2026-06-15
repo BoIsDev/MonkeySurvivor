@@ -17,6 +17,6 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 2
   damage: 10
-  attackRange: 1
+  attackRange: 2
   attackRate: 1
   expReward: 5

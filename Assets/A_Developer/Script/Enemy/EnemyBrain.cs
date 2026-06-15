@@ -148,7 +148,6 @@ public class EnemyBrain : MonoBehaviour
     private void OnDead()
     {
         attack?.Cancel();
-        playerStats?.AddExp(data.expReward);
         SetState(StateEnemy.Dead);
         StartCoroutine(DeathRoutine());
     }

@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Base for all player weapons: owns attack timing, target finding and level stats.
+/// Subclasses only implement SpawnEffect to define what the attack looks like.
+/// </summary>
 public abstract class WeaponBase : MonoBehaviour
 {
     [Header("Data")] [SerializeField] private WeaponDataSO weaponData;
@@ -10,7 +14,6 @@ public abstract class WeaponBase : MonoBehaviour
     protected GameObject EffectPrefab => effectPrefab;
 
     [Header("Config")] [SerializeField] protected TargetType targetType;
-    [SerializeField] protected AttackType attackType;
 
     private int currentLevel = 0;
     protected float lastAttackTime;
@@ -19,9 +22,22 @@ public abstract class WeaponBase : MonoBehaviour
     protected float Range => weaponData.levels[currentLevel].range;
     protected int Damage => weaponData.levels[currentLevel].damage;
     protected int MaxTarget => weaponData.levels[currentLevel].maxTarget;
+    protected float EffectScale => weaponData.levels[currentLevel].effectScale;
 
     // Called by WeaponPlayer after instantiation to inject weapon data at runtime.
     public void Init(WeaponDataSO data) => weaponData = data;
+
+    // True once this instance is the evolved form — prevents WeaponPlayer
+    // from evolving the same slot again (the evolved form shares the base SO).
+    public bool IsEvolved { get; private set; }
+
+    // Evolved form reuses the SAME data as the base weapon, locked at the last level entry.
+    public void InitAsEvolved(WeaponDataSO data)
+    {
+        weaponData = data;
+        currentLevel = data.levels.Length - 1;
+        IsEvolved = true;
+    }
 
     public WeaponDataSO WeaponData => weaponData;
 
@@ -31,7 +47,11 @@ public abstract class WeaponBase : MonoBehaviour
         HandleAttack();
     }
 
-    public bool IsMaxLevel => weaponData != null && currentLevel >= weaponData.levels.Length - 1;
+    // True when one more upgrade would reach the LAST level entry.
+    // Convention: the last entry holds the evolved form's stats, the second-to-last
+    // is the base weapon's max. So WeaponPlayer evolves on this step instead of
+    // leveling the base form into that final entry.
+    public bool NextLevelIsMax => weaponData != null && currentLevel + 1 >= weaponData.levels.Length - 1;
 
     public void LevelUp()
     {
@@ -50,7 +70,7 @@ public abstract class WeaponBase : MonoBehaviour
         List<Transform> targets = FindTargets();
         if (targets.Count == 0) return;
 
-        ExecuteAttack(targets);
+        SpawnEffect(targets);
         lastAttackTime = Time.time;
     }
 
@@ -143,38 +163,15 @@ public abstract class WeaponBase : MonoBehaviour
     // ATTACK
     // =========================
 
-    protected virtual void ExecuteAttack(List<Transform> targets)
-    {
-        switch (attackType)
-        {
-            case AttackType.Projectile: SpawnProjectile(targets[0]); break;
-            case AttackType.Slash: SpawnSlash(targets[0]); break;
-            case AttackType.Aura: AuraDamage(targets); break;
-            case AttackType.Meteor: SpawnMeteor(targets); break;
-        }
-    }
+    // The single extension point: each weapon decides how to spawn its own effect
+    // (single slash, AOE, projectile per target...).
+    // HandleAttack guarantees targets contains at least one element.
+    protected abstract void SpawnEffect(List<Transform> targets);
 
     // Passes the current damage value to the DamageDealer on a spawned effect prefab.
     protected void InitDamageDealer(GameObject go)
     {
         go.GetComponent<DamageDealer>()?.SetDamage(Damage);
-        Debug.Log("Game Object Damage Dealer " + go + " damage " + Damage );
-    }
-
-    protected virtual void SpawnProjectile(Transform target)
-    {
-    }
-
-    protected virtual void SpawnSlash(Transform targets)
-    {
-    }
-
-    protected virtual void AuraDamage(List<Transform> targets)
-    {
-    }
-
-    protected virtual void SpawnMeteor(List<Transform> targets)
-    {
     }
 
     // =========================
@@ -195,12 +192,4 @@ public enum TargetType
     Furthest,
     Random,
     AllInRange
-}
-
-public enum AttackType
-{
-    Projectile,
-    Slash,
-    Aura,
-    Meteor
 }
