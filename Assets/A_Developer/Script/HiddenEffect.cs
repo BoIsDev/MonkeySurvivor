@@ -7,10 +7,10 @@ public class HiddenEffect : MonoBehaviour
 {
     [SerializeField] private float lifetime = 2f;
 
-    private GameObject _prefab;
+    private GameObject poolPrefab;
 
     // Called by PoolManager on Spawn — no manual assignment in the Inspector needed.
-    public void Init(GameObject prefab) => _prefab = prefab;
+    public void Init(GameObject prefab) => poolPrefab = prefab;
 
     void OnEnable()
     {
@@ -22,10 +22,18 @@ public class HiddenEffect : MonoBehaviour
         CancelInvoke();
     }
 
+    // Return to the pool immediately, before the lifetime expires
+    // (e.g. a projectile that should vanish the moment it hits something).
+    public void DespawnNow()
+    {
+        CancelInvoke(nameof(Hide));
+        Hide();
+    }
+
     void Hide()
     {
-        if (_prefab != null)
-            PoolManager.Instance.Despawn(_prefab, gameObject);
+        if (poolPrefab != null)
+            PoolManager.Instance.Despawn(poolPrefab, gameObject);
         else
             gameObject.SetActive(false);
     }

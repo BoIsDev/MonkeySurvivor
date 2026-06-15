@@ -9,6 +9,13 @@ public class DamageDealer : MonoBehaviour
     // Effect spawns with collisions OFF, then turns them on after this many seconds.
     // 0 = active immediately on spawn.
     [SerializeField] private float activationDelay = 0f;
+    // When ON, the effect returns to the pool the moment it damages an enemy
+    // (e.g. a projectile). When OFF it lives on / pierces until its lifetime ends.
+    [SerializeField] private bool despawnOnHit = false;
+
+    [Header("Hit")]
+    // Optional VFX spawned at the impact point each time this deals damage.
+    [SerializeField] private GameObject hitEffect;
 
     [Header("Half Sphere Filter")]
     [SerializeField] private bool useHalfSphere = false;
@@ -16,17 +23,19 @@ public class DamageDealer : MonoBehaviour
 
     private float nextTickTime;
     private float damage;
-    private Collider _col;
+    private Collider selfCollider;
+    private HiddenEffect hidden;
 
-    private void Awake() => _col = GetComponent<Collider>();
-
-    // Runs on every (re)spawn from the pool: hold collisions off, then arm after the delay.
-    // Disabling the collider removes it from physics entirely, so no trigger fires from
-    // either side regardless of which object owns the Rigidbody.
+    private void Awake()
+    {
+        selfCollider = GetComponentInChildren<Collider>();
+        hidden = GetComponent<HiddenEffect>();
+    }
+    
     private void OnEnable()
     {
         nextTickTime = 0f;
-        if (_col != null) _col.enabled = false;
+        if (selfCollider != null) selfCollider.enabled = false;
 
         CancelInvoke(nameof(EnableCollisions));
         if (activationDelay > 0f)
@@ -34,14 +43,12 @@ public class DamageDealer : MonoBehaviour
         else
             EnableCollisions();
     }
-
-    // Pool despawn (SetActive false) lands here — cancel the pending arm so it
-    // never fires on a recycled object during its NEXT spawn.
+    
     private void OnDisable() => CancelInvoke(nameof(EnableCollisions));
 
     private void EnableCollisions()
     {
-        if (_col != null) _col.enabled = true;
+        if (selfCollider != null) selfCollider.enabled = true;
     }
 
     public void SetDamage(float value) => damage = value;
@@ -56,7 +63,18 @@ public class DamageDealer : MonoBehaviour
     {
         if (continuous) return;
         if (useHalfSphere && !IsInFront(col)) return;
-        col.GetComponent<IDamageable>()?.TakeDamage(damage);
+
+        var target = col.GetComponent<IDamageable>();
+        if (target == null) return;
+
+        target.TakeDamage(damage);
+
+        // Spawn hit VFX at the point on the enemy closest to this effect.
+        if (hitEffect != null)
+            PoolManager.Instance.Spawn(hitEffect, col.ClosestPoint(transform.position), Quaternion.identity);
+
+        if (despawnOnHit && hidden != null)
+            hidden.DespawnNow();
     }
 
     private void OnTriggerStay(Collider col)

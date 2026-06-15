@@ -63,7 +63,7 @@ public abstract class WeaponBase : MonoBehaviour
     // MAIN
     // =========================
 
-    public void HandleAttack()
+    public virtual void HandleAttack()
     {
         if (!CanAttack()) return;
 

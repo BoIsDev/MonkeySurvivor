@@ -7,22 +7,25 @@ using UnityEngine;
 public class SlashFireWeapon : WeaponBase
 {
     [SerializeField] private float spawnDistance = 1f;
-
     protected override void SpawnEffect(List<Transform> targets)
     {
         Transform target = targets[0];
-
-        Vector3 dir = (target.position - transform.position).normalized;
-        dir.y = 0;
-
-        Vector3 spawnPos = transform.position + dir * spawnDistance;
-        // Raise the slash from ground level up to the character's torso height.
+        // Launch point: at the player, raised to torso height.
+        Vector3 spawnPos = transform.position;
         spawnPos.y += 0.86f;
 
-        Quaternion rot = Quaternion.LookRotation(-dir);
+        // Determine the real 3D aim direction from the launch point to the target
+        // (no horizontal flattening, so it can angle up or down).
+        Vector3 dir = (target.position - spawnPos).normalized;
 
-        GameObject slash = PoolManager.Instance.Spawn(EffectPrefab, spawnPos, rot);
-        slash.transform.localScale = Vector3.one * EffectScale;
-        InitDamageDealer(slash);
+        Quaternion rot = Quaternion.LookRotation(dir);
+
+        GameObject proj = PoolManager.Instance.Spawn(EffectPrefab, spawnPos, rot);
+        proj.transform.localScale = Vector3.one * EffectScale;
+        proj.GetComponent<Projectile>()?.Launch(dir);
+        InitDamageDealer(proj);
+
+        // Debug: red ray showing the shot direction, visible ~1s in the Scene view.
+        Debug.DrawRay(spawnPos, dir * Range, Color.red, 1f);
     }
 }
