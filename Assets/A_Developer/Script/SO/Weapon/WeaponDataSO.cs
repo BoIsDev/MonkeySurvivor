@@ -2,7 +2,7 @@ using UnityEngine;
 
 // Identifies the weapon SLOT, not the form: every form in an evolution chain
 // (e.g. Slash -> Evolution_Slash) shares the same value so it occupies one slot.
-public enum WeaponType { IceAura, EnergyBoom, Slash, SlashShoot }
+public enum WeaponType { IceAura, EnergyBoom, Slash, SlashShoot, Fireball }
 
 [CreateAssetMenu(menuName = "WeaponSO/Weapon Data")]
 public class WeaponDataSO : ScriptableObject
