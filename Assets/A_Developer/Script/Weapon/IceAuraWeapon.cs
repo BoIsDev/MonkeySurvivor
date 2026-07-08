@@ -23,6 +23,6 @@ public class IceAuraWeapon : WeaponBase
     {
         // Return the aura to the pool when this weapon object is destroyed (e.g. on evolution).
         if (spawnedAura != null && PoolManager.Instance != null)
-            PoolManager.Instance.Despawn(EffectPrefab, spawnedAura);
+            PoolManager.Instance.Despawn(spawnedAura);
     }
 }

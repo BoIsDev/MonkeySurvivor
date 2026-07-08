@@ -7,7 +7,8 @@ public class PoolManager : MonoBehaviour
 
     [SerializeField] private Transform parentSpawn;
 
-    private Dictionary<GameObject, Queue<GameObject>> _poolDict = new();
+    private Dictionary<GameObject, Queue<GameObject>> poolDict = new();
+    private Dictionary<GameObject, GameObject> sourcePrefab = new();   // instance → prefab it came from
 
     void Awake()
     {
@@ -17,26 +18,25 @@ public class PoolManager : MonoBehaviour
 
     public GameObject Spawn(GameObject prefab, Vector3 pos, Quaternion rot)
     {
-        if (!_poolDict.ContainsKey(prefab))
-            _poolDict[prefab] = new Queue<GameObject>();
+        if (!poolDict.ContainsKey(prefab))
+            poolDict[prefab] = new Queue<GameObject>();
 
-        var pool = _poolDict[prefab];
+        var pool = poolDict[prefab];
         var obj  = pool.Count > 0 ? pool.Dequeue() : Instantiate(prefab, parentSpawn);
 
+        sourcePrefab[obj] = prefab;          // remember which pool this instance belongs to
+
         obj.transform.SetPositionAndRotation(pos, rot);
-
-        // Auto-inject the prefab reference into HiddenEffect so it despawns back into the correct queue.
-        var hidden = obj.GetComponent<HiddenEffect>();
-        if (hidden != null) hidden.Init(prefab);
-
         obj.SetActive(true);
         return obj;
     }
 
-    public void Despawn(GameObject prefab, GameObject obj)
+    // Despawn by instance — PoolManager looks up which pool it came from.
+    public void Despawn(GameObject obj)
     {
         obj.SetActive(false);
         obj.transform.SetParent(parentSpawn);
-        _poolDict[prefab].Enqueue(obj);
+        if (sourcePrefab.TryGetValue(obj, out var prefab))
+            poolDict[prefab].Enqueue(obj);
     }
 }

@@ -24,12 +24,10 @@ public class DamageDealer : MonoBehaviour
     private float nextTickTime;
     private float damage;
     private Collider selfCollider;
-    private HiddenEffect hidden;
 
     private void Awake()
     {
         selfCollider = GetComponentInChildren<Collider>();
-        hidden = GetComponent<HiddenEffect>();
     }
     
     private void OnEnable()
@@ -62,8 +60,8 @@ public class DamageDealer : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
         if (continuous) return;
-        if (useHalfSphere && !IsInFront(col)) return;
-
+         if (useHalfSphere && !IsInFront(col)) return;
+        if(col.CompareTag("Player")) return;
         var target = col.GetComponent<IDamageable>();
         if (target == null) return;
 
@@ -73,8 +71,8 @@ public class DamageDealer : MonoBehaviour
         if (hitEffect != null)
             PoolManager.Instance.Spawn(hitEffect, col.ClosestPoint(transform.position), Quaternion.identity);
 
-        if (despawnOnHit && hidden != null)
-            hidden.DespawnNow();
+        if (despawnOnHit)
+            PoolManager.Instance.Despawn(gameObject);
     }
 
     private void OnTriggerStay(Collider col)

@@ -161,10 +161,7 @@ public class EnemyBrain : MonoBehaviour
         _onDeactivated?.Invoke();
         _onDeactivated = null;
 
-        if (_sourcePrefab != null)
-            PoolManager.Instance.Despawn(_sourcePrefab, gameObject);
-        else
-            gameObject.SetActive(false);
+        PoolManager.Instance.Despawn(gameObject);
     }
 
     private void OnDrawGizmosSelected()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -17,5 +18,4 @@ public class Projectile : MonoBehaviour
     {
         transform.position += _direction * (speed * Time.deltaTime);
     }
-    
 }

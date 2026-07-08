@@ -53,7 +53,6 @@ public class Fireball : MonoBehaviour
         if (col != null) aim = col.bounds.center;     // aim at body center, not the foot pivot
         return (aim - transform.position).normalized;
     }
-
     private void OnTriggerEnter(Collider col)
     {
         if (!attacking) return;   // no damage while orbiting

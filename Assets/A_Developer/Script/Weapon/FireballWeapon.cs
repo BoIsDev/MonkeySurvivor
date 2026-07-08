@@ -49,7 +49,8 @@ public class FireballWeapon : WeaponBase
     {
         for (int i = 0; i < count; i++)
         {
-            if (occupants[i] != null || Time.time < respawnTime[i]) continue;
+            if (occupants[i] != null && occupants[i].gameObject.activeSelf) continue;  // still orbiting → keep
+            if (Time.time < respawnTime[i]) continue;
 
             GameObject go = PoolManager.Instance.Spawn(EffectPrefab, points[i].position, Quaternion.identity);
             go.transform.SetParent(points[i]);
@@ -75,14 +76,14 @@ public class FireballWeapon : WeaponBase
 
     private void OnFinished(Fireball fb)
     {
-        PoolManager.Instance.Despawn(EffectPrefab, fb.gameObject);
+        PoolManager.Instance.Despawn(fb.gameObject);
     }
 
     private void OnDestroy()
     {
         if (PoolManager.Instance == null || occupants == null) return;
         foreach (Fireball fb in occupants)
-            if (fb != null) PoolManager.Instance.Despawn(EffectPrefab, fb.gameObject);
+            if (fb != null) PoolManager.Instance.Despawn(fb.gameObject);
     }
 
     // Required by WeaponBase (abstract); this weapon manages everything in HandleAttack.
