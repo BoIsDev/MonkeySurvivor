@@ -31,8 +31,6 @@ public class Fireball : MonoBehaviour
         elapsed = 0f;
         attacking = true;
         transform.rotation = Quaternion.LookRotation(flyDir);
-        // thêm cuối LaunchAt:
-        Debug.DrawLine(transform.position, target.position, Color.yellow, 1f);
     }
 
     private void Update()
