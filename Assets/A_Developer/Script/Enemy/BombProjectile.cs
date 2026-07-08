@@ -44,7 +44,7 @@ public class BombProjectile : MonoBehaviour
         foreach (var hit in hits)
             hit.GetComponent<IDamageable>()?.TakeDamage(_damage);
 
-        PoolManager.Instance.Despawn(_prefabRef, gameObject);
+        PoolManager.Instance.Despawn(gameObject);
     }
 
     private void OnDrawGizmosSelected()

@@ -1111,8 +1111,8 @@ CapsuleCollider:
   serializedVersion: 2
   m_Radius: 0.25
   m_Height: 1.6
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.8, z: 0}
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.3, z: -0.11}
 --- !u!114 &6140599354370001034
 MonoBehaviour:
   m_ObjectHideFlags: 0

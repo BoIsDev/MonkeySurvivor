@@ -1,13 +1,11 @@
 using UnityEngine;
 
+/// <summary>
+/// Returns a pooled effect to its pool after lifetime seconds.
+/// </summary>
 public class HiddenEffect : MonoBehaviour
 {
     [SerializeField] private float lifetime = 2f;
-
-    private GameObject _prefab;
-
-    // Gọi bởi PoolManager lúc Spawn — không cần gán tay trong Inspector
-    public void Init(GameObject prefab) => _prefab = prefab;
 
     void OnEnable()
     {
@@ -19,11 +17,13 @@ public class HiddenEffect : MonoBehaviour
         CancelInvoke();
     }
 
-    void Hide()
+    // Return to the pool immediately, before the lifetime expires
+    // (e.g. a projectile that should vanish the moment it hits something).
+    public void DespawnNow()
     {
-        if (_prefab != null)
-            PoolManager.Instance.Despawn(_prefab, gameObject);
-        else
-            gameObject.SetActive(false);
+        CancelInvoke(nameof(Hide));
+        Hide();
     }
+
+    void Hide() => PoolManager.Instance.Despawn(gameObject);
 }

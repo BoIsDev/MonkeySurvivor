@@ -26,7 +26,6 @@ public class Health : MonoBehaviour, IDamageable
         if (Current <= 0f) { OnDied?.Invoke(); return; }
         if (invincibleDuration > 0f) StartCoroutine(InvincibilityRoutine());
         currentHealth = Current;
-        Debug.Log("Debug HP " + Current);
     }
 
     // Blocks incoming damage for a set duration after being hit.

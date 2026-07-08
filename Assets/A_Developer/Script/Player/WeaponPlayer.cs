@@ -14,10 +14,10 @@ public class WeaponPlayer : MonoBehaviour
             var weapon = weaponsEquip[weaponData.weaponType];
             var currentData = weapon.WeaponData;
 
-            if (weapon.IsMaxLevel && currentData.evolvedData != null)
-                EvolveWeapon(weaponData.weaponType, currentData.evolvedData);
+            if (weapon.NextLevelIsMax && !weapon.IsEvolved && currentData.evolvedPrefab != null)
+                EvolveWeapon(weaponData.weaponType, currentData);
             else
-                weapon.LevelUp();
+                weapon.LevelUp(); // caps at max; no-op when already evolved
             return;
         }
 
@@ -26,16 +26,17 @@ public class WeaponPlayer : MonoBehaviour
         weaponsEquip.Add(weaponData.weaponType, newWeapon);
     }
 
-    private void EvolveWeapon(WeaponType type, WeaponDataSO evolvedData)
+    // Evolution = swap the weapon prefab in place; same SO, same slot, stats locked at max level.
+    private void EvolveWeapon(WeaponType type, WeaponDataSO data)
     {
         Destroy(weaponsEquip[type].gameObject);
 
-        WeaponBase evolved = Instantiate(evolvedData.weaponPrefab, transform);
-        evolved.Init(evolvedData);
+        WeaponBase evolved = Instantiate(data.evolvedPrefab, transform);
+        evolved.InitAsEvolved(data);
 
         weaponsEquip[type] = evolved;
 
-        Debug.Log($"[WeaponPlayer] {type} evolved → {evolvedData.weaponName}");
+        Debug.Log($"[WeaponPlayer] {type} evolved");
     }
 
     public bool HasWeapon(WeaponType type) => weaponsEquip.ContainsKey(type);

@@ -24476,9 +24476,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad9670ad27089c443a060d6be6dc8c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 25
   continuous: 0
   tickRate: 0.5
+  activationDelay: 0
   useHalfSphere: 1
   halfAngle: 90
 --- !u!114 &713612753935609733

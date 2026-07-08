@@ -2,15 +2,52 @@ using UnityEngine;
 
 public class DamageDealer : MonoBehaviour
 {
-    [SerializeField] private float damage;
     [SerializeField] private bool continuous;
     [SerializeField] private float tickRate = 0.5f;
+
+    [Header("Activation")]
+    // Effect spawns with collisions OFF, then turns them on after this many seconds.
+    // 0 = active immediately on spawn.
+    [SerializeField] private float activationDelay = 0f;
+    // When ON, the effect returns to the pool the moment it damages an enemy
+    // (e.g. a projectile). When OFF it lives on / pierces until its lifetime ends.
+    [SerializeField] private bool despawnOnHit = false;
+
+    [Header("Hit")]
+    // Optional VFX spawned at the impact point each time this deals damage.
+    [SerializeField] private GameObject hitEffect;
 
     [Header("Half Sphere Filter")]
     [SerializeField] private bool useHalfSphere = false;
     [SerializeField] private float halfAngle = 90f;
 
     private float nextTickTime;
+    private float damage;
+    private Collider selfCollider;
+
+    private void Awake()
+    {
+        selfCollider = GetComponentInChildren<Collider>();
+    }
+    
+    private void OnEnable()
+    {
+        nextTickTime = 0f;
+        if (selfCollider != null) selfCollider.enabled = false;
+
+        CancelInvoke(nameof(EnableCollisions));
+        if (activationDelay > 0f)
+            Invoke(nameof(EnableCollisions), activationDelay);
+        else
+            EnableCollisions();
+    }
+    
+    private void OnDisable() => CancelInvoke(nameof(EnableCollisions));
+
+    private void EnableCollisions()
+    {
+        if (selfCollider != null) selfCollider.enabled = true;
+    }
 
     public void SetDamage(float value) => damage = value;
 
@@ -23,8 +60,19 @@ public class DamageDealer : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
         if (continuous) return;
-        if (useHalfSphere && !IsInFront(col)) return;
-        col.GetComponent<IDamageable>()?.TakeDamage(damage);
+         if (useHalfSphere && !IsInFront(col)) return;
+        if(col.CompareTag("Player")) return;
+        var target = col.GetComponent<IDamageable>();
+        if (target == null) return;
+
+        target.TakeDamage(damage);
+
+        // Spawn hit VFX at the point on the enemy closest to this effect.
+        if (hitEffect != null)
+            PoolManager.Instance.Spawn(hitEffect, col.ClosestPoint(transform.position), Quaternion.identity);
+
+        if (despawnOnHit)
+            PoolManager.Instance.Despawn(gameObject);
     }
 
     private void OnTriggerStay(Collider col)
@@ -35,4 +83,6 @@ public class DamageDealer : MonoBehaviour
         nextTickTime = Time.time + tickRate;
         col.GetComponent<IDamageable>()?.TakeDamage(damage);
     }
+    
+    
 }

@@ -22,11 +22,24 @@ MonoBehaviour:
     range: 5
     damage: 5
     maxTarget: 2
-  - attackRate: 1.5
+  - attackRate: 2
     range: 10
     damage: 10
     maxTarget: 3
-  - attackRate: 1
-    range: 15
+  - attackRate: 2
+    range: 10
     damage: 20
+    maxTarget: 4
+  - attackRate: 1.5
+    range: 15
+    damage: 25
+    maxTarget: 4
+  - attackRate: 1.5
+    range: 15
+    damage: 30
     maxTarget: 5
+  - attackRate: 2.5
+    range: 20
+    damage: 40
+    maxTarget: 4
+  evolvedPrefab: {fileID: 2535306174894555164, guid: 806e647ada3d92c4a869b7849cfedcfb, type: 3}
