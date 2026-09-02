@@ -10,11 +10,12 @@ public class EnemyBrain : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private EnemyDataSO data;
     [SerializeField] private Health health;
+    [SerializeField] private GameObject expGemPrefab;
     private EnemyAttackBase attack;
     private Transform player;
-    private PlayerStats playerStats;
     private StateEnemy currentState;
 
+    private Vector3 posSpawnExp = new Vector3(0, 1.5f, 0);
     private GameObject _sourcePrefab;
     private Action _onDeactivated;
 
@@ -28,7 +29,6 @@ public class EnemyBrain : MonoBehaviour
     {
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         player = playerObj?.transform;
-        playerStats = playerObj?.GetComponent<PlayerStats>();
 
         attack = GetComponent<EnemyAttackBase>();
         attack?.Init(data);
@@ -128,7 +128,12 @@ public class EnemyBrain : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
     }
-
+    private void OnDead()
+    {
+        attack?.Cancel();
+        SetState(StateEnemy.Dead);
+        StartCoroutine(DeathRoutine());
+    }
     private void OnDamaged(float amount)
     {
         if (currentState == StateEnemy.Dead) return;
@@ -145,13 +150,6 @@ public class EnemyBrain : MonoBehaviour
         SetState(StateEnemy.Run);
     }
 
-    private void OnDead()
-    {
-        attack?.Cancel();
-        SetState(StateEnemy.Dead);
-        StartCoroutine(DeathRoutine());
-    }
-
     private IEnumerator DeathRoutine()
     {
         yield return null;
@@ -160,6 +158,11 @@ public class EnemyBrain : MonoBehaviour
 
         _onDeactivated?.Invoke();
         _onDeactivated = null;
+
+        // Drop an exp gem for the player to collect.
+        if (expGemPrefab != null && data != null)
+            PoolManager.Instance.Spawn(expGemPrefab, transform.position + posSpawnExp, Quaternion.identity)
+                .GetComponent<ExpPickup>()?.Setup(data.expReward);
 
         PoolManager.Instance.Despawn(gameObject);
     }

@@ -12,16 +12,22 @@ public class Health : MonoBehaviour, IDamageable
 
     public event Action OnDied;
     public event Action<float> OnDamageTaken;
+    public event Action<float, float> OnHealthChanged;   // (current, max)
 
     private bool isInvincible;
 
-    private void OnEnable() => Current = maxHealth;
+    private void OnEnable()
+    {
+        Current = maxHealth;
+        OnHealthChanged?.Invoke(Current, maxHealth);
+    }
 
     public void TakeDamage(float amount)
     {
         if (isInvincible) return;
         if (Current <= 0f) return;
         Current = Mathf.Max(0f, Current - amount);
+        OnHealthChanged?.Invoke(Current, maxHealth);
         OnDamageTaken?.Invoke(amount);
         if (Current <= 0f) { OnDied?.Invoke(); return; }
         if (invincibleDuration > 0f) StartCoroutine(InvincibilityRoutine());

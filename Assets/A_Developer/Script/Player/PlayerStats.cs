@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -9,6 +10,10 @@ public class PlayerStats : MonoBehaviour
     public float Damage { get; private set; }
     public int CurrentExp { get; private set; }
     public int Level { get; private set; } = 1;
+    public int ExpToNextLevel => Level * 10;
+
+    public event Action<int, int> OnExpChanged;   // (current, needed)
+    public event Action<int> OnLevelChanged;      // (level)
 
     private void OnEnable() => health.OnDied += OnDied;
     private void OnDisable() => health.OnDied -= OnDied;
@@ -24,14 +29,15 @@ public class PlayerStats : MonoBehaviour
     public void AddExp(int amount)
     {
         CurrentExp += amount;
-        if (CurrentExp >= Level * 10) LevelUp();
+        if (CurrentExp >= ExpToNextLevel) LevelUp();
+        OnExpChanged?.Invoke(CurrentExp, ExpToNextLevel);
     }
 
     private void LevelUp()
     {
         Level++;
         CurrentExp = 0;
-        UITestManager.Instance.OpenPaneWeapon();
-        Debug.Log("Level Up!");
+        OnLevelChanged?.Invoke(Level);
+        UITestManager.Instance.OnClickLevelUp();   // opens AND repopulates the weapon-pick panel
     }
 }
